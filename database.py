@@ -1,0 +1,227 @@
+import sqlite3
+import json
+from datetime import datetime, timedelta
+# import uuid
+
+
+class DatabaseManager:
+    def __init__(self, db_name="smart_fridge.db"):
+        self.db_name = db_name
+        self.conn = None
+        self.cursor = None
+
+    def connect(self):
+        """Устанавливает соединение с БД."""
+        self.conn = sqlite3.connect(self.db_name)
+        self.cursor = self.conn.cursor()
+
+    def close(self):
+        """Закрывает соединение с БД."""
+        if self.conn:
+            self.conn.close()
+            self.conn = None
+            self.cursor = None
+
+    def create_tables(self):
+        """Создаёт таблицы, если их нет."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS products (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_name TEXT NOT NULL,
+                product_type TEXT NOT NULL,
+                manufacture_date DATE NOT NULL,
+                expiry_date DATE NOT NULL,
+                quantity REAL NOT NULL,
+                unit TEXT NOT NULL,
+                nutrition_info TEXT,
+                measurement_type TEXT NOT NULL,
+                added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        self.cursor.execute("""
+          CREATE TABLE IF NOT EXISTS shopping_list (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_name TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+           )
+       """)
+        self.conn.commit()
+
+    def add_product(self, product_data):
+        """Добавляет продукт в таблицу products."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        try:
+            nutrition_info_json = json.dumps(product_data.get('nutrition_info', {}))  # Преобразуем словарь в JSON
+            self.cursor.execute("""
+                INSERT INTO products (product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                product_data["product_name"],
+                product_data["product_type"],
+                product_data["manufacture_date"],
+                product_data["expiry_date"],
+                product_data["quantity"],
+                product_data["unit"],
+                nutrition_info_json,
+                product_data["measurement_type"]
+            )
+                                )
+
+            self.conn.commit()
+            return True, "Продукт успешно добавлен в холодильник."
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Ошибка добавления продукта: {e}"
+
+    def remove_product(self, product_id):
+        """Удаляет продукт из таблицы products по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        try:
+            self.cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+            self.conn.commit()
+            if self.cursor.rowcount > 0:
+                return True, "Продукт успешно удален из холодильника."
+            else:
+                return False, "Продукт с таким id не найден в холодильнике."
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Ошибка удаления продукта: {e}"
+
+    def get_all_products(self):
+        """Получает все продукты из таблицы products."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        self.cursor.execute("SELECT * FROM products")
+        rows = self.cursor.fetchall()
+        products = []
+        for row in rows:
+            product = self._row_to_dict(row)
+            products.append(product)
+        return products
+
+    def get_product_by_id(self, product_id):
+        """Получает продукт из таблицы products по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        self.cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
+        row = self.cursor.fetchone()
+        if row:
+            return self._row_to_dict(row)
+        else:
+            return None
+
+    def _row_to_dict(self, row):
+        """Преобразует строку из БД в словарь."""
+        nutrition_info = row[7]
+        return {
+            "id": row[0],
+            "product_name": row[1],
+            "product_type": row[2],
+            "manufacture_date": row[3],
+            "expiry_date": row[4],
+            "quantity": row[5],
+            "unit": row[6],
+            "nutrition_info": json.loads(nutrition_info) if nutrition_info else None,
+            "measurement_type": row[8],
+            "added_at": row[9]
+        }
+
+    def search_products(self, search_term=None, search_type=None):
+        """Поиск продуктов по названию и/или типу."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        query = "SELECT * FROM products WHERE 1=1"
+        params = []
+        if search_term:
+            query += " AND product_name LIKE ?"
+            params.append(f"%{search_term}%")
+        if search_type:
+            query += " AND product_type LIKE ?"
+            params.append(f"%{search_type}%")
+
+        self.cursor.execute(query, params)
+        rows = self.cursor.fetchall()
+        products = []
+        for row in rows:
+            product = self._row_to_dict(row)
+            products.append(product)
+
+        return products
+
+    def add_to_shopping_list(self, product_name, quantity):
+        """Добавляет продукт в список покупок."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        try:
+            self.cursor.execute("""
+                INSERT INTO shopping_list (product_name, quantity)
+                VALUES (?, ?)
+            """, (product_name, quantity))
+            self.conn.commit()
+            return True, "Продукт успешно добавлен в список покупок."
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Ошибка добавления продукта в список покупок: {e}"
+
+    def remove_from_shopping_list(self, item_id):
+        """Удаляет продукт из списка покупок по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        try:
+            self.cursor.execute("DELETE FROM shopping_list WHERE id = ?", (item_id,))
+            self.conn.commit()
+            if self.cursor.rowcount > 0:
+                return True, "Продукт успешно удален из списка покупок."
+            else:
+                return False, "Продукт с таким id не найден в списке покупок."
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Ошибка удаления продукта из списка покупок: {e}"
+
+    def get_all_shopping_list(self):
+        """Получает весь список покупок."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        self.cursor.execute("SELECT * FROM shopping_list")
+        rows = self.cursor.fetchall()
+        items = []
+        for row in rows:
+            item = self._shopping_row_to_dict(row)
+            items.append(item)
+        return items
+
+    def _shopping_row_to_dict(self, row):
+        return {
+            "id": row[0],
+            "product_name": row[1],
+            "quantity": row[2],
+            "added_at": row[3]
+        }
+
+    def get_products_expiring_soon(self, days=1):
+        """Получает продукты, у которых истекает срок годности в течение days дней."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        today = datetime.now().date()
+        cutoff_date = today + timedelta(days=days)
+        self.cursor.execute("SELECT * FROM products WHERE expiry_date BETWEEN ? AND ?",
+                            (today.isoformat(), cutoff_date.isoformat()))
+        rows = self.cursor.fetchall()
+        products = []
+        for row in rows:
+            product = self._row_to_dict(row)
+            products.append(product)
+        return products
+
