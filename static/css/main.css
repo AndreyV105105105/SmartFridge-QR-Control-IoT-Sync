@@ -111,7 +111,7 @@ header {
     background-color: #eadec4;
     border-radius: 2px 2px 2px 2px;
     overflow-y: auto;
-    z-index: 900;
+    z-index: 700;
     opacity: 1;
     border: 2px solid #a8bed4;
     outline: 2px ridge #a8bed4;
@@ -126,10 +126,11 @@ footer {
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 790px;
+    top: 80%;
     left: 30px;
     right: 30px;
     bottom: 1px;
+    height: 20%;
     background-image: url('../img/aaaa.png');
     background-size: cover;
     background-repeat: no-repeat;
