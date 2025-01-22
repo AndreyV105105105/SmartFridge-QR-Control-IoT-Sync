@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for, request, Flask, render_template, request, redirect, url_for
 from database import DatabaseManager
+from user_agents import parse
 
 dm = DatabaseManager()
 dm.connect()
@@ -15,6 +16,9 @@ products.sort(key=lambda x: x['product_name'])
 
 @app.route('/')
 def index():
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile
 
     search_query = request.args.get('search', '')
     selected_category = request.args.get('product_type', '')
@@ -24,7 +28,7 @@ def index():
         if (search_query.lower() in p['product_name'].lower()) and
            (selected_category == '' or p['product_type'] == selected_category)
     ]
-    return render_template('index.html', products=filtered_products, search_query=search_query, product_type=selected_category)
+    return render_template('index.html', products=filtered_products, search_query=search_query, product_type=selected_category, parameter_value=parameter_value)
 
 @app.route('/product/<int:product_id>')
 def product(product_id):

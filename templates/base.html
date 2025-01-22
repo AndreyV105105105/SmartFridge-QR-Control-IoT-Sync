@@ -7,6 +7,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css' )}}">
     <title>{% block title %}{% endblock %}</title>
+    <style>
+        .hidden {
+            display: none; /* Скрыть элемент */
+        }
+        .disabled {
+            background-color: gray; /* Изменение цвета для недоступной кнопки */
+            cursor: not-allowed; /* Курсор при наведении */
+        }
+    </style>
 </head>
 <body>
     <div class="page">
@@ -54,10 +63,30 @@
 
         <!-- Нижнее поле -->
         <footer>
-            <button class="icon-buttonfooter" onclick="location.href='{{ url_for('qr') }}'">
+            <button id="myButton" class="icon-buttonfooter" onclick="location.href='{{ url_for('qr') }}'">
                     <img src="{{ url_for('static', filename='img/qr2.png') }}" alt="Скан">
             </button>
         </footer>
+        <!-- скрипт, который делает кнопку qr видимой/невидимой в зависимости от девайса-->
+        <script>
+        // Получаем значение параметра из Python
+        const parameterValue = {{ parameter_value | tojson }};
+
+        // Функция для управления видимостью и доступностью кнопки
+        function updateButtonVisibility(isVisible) {
+            const button = document.getElementById('myButton');
+            if (isVisible) {
+                button.classList.remove('hidden');
+                button.disabled = false; // Делаем кнопку доступной
+            } else {
+                button.classList.add('hidden');
+                button.disabled = true; // Делаем кнопку недоступной
+            }
+        }
+
+        // Используем значение параметра
+        updateButtonVisibility(parameterValue);
+    </script>
     </div>
 </body>
 </html>
