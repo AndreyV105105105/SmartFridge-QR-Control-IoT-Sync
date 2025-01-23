@@ -28,7 +28,8 @@ def index():
         if (search_query.lower() in p['product_name'].lower()) and
            (selected_category == '' or p['product_type'] == selected_category)
     ]
-    return render_template('index.html', products=filtered_products, search_query=search_query, product_type=selected_category, parameter_value=parameter_value)
+    return render_template('index.html', products=filtered_products, search_query=search_query,
+                           product_type=selected_category, parameter_value=parameter_value)
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
@@ -38,24 +39,40 @@ def product(product_id):
 # Страница уведомлений
 @app.route('/notifications')
 def notifications():
-    return render_template('notifications.html')
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile
+
+    return render_template('notifications.html',  parameter_value=parameter_value)
 
 
 # Страница аналитики
 @app.route('/analytics')
 def analytics():
-    return render_template('analytics.html')
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile
+
+    return render_template('analytics.html',  parameter_value=parameter_value)
 
 
 # Страница списка покупок
 @app.route('/shopping-list')
 def shopping_list():
-    return render_template('shopping_list.html')
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile
+
+    return render_template('shopping_list.html',  parameter_value=parameter_value)
 
 
 @app.route('/qr')
 def qr():
-    return render_template('qr.html')
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile
+
+    return render_template('qr.html',  parameter_value=parameter_value)
 
 
 if __name__ == "__main__":
