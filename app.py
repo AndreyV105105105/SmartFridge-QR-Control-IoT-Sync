@@ -1,6 +1,18 @@
-from flask import Flask, render_template, url_for, request, Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, url_for, request, Flask, render_template, request, redirect, url_for, jsonify
 from database import DatabaseManager
+from qr_scaner import safe_qr_decode, process_image
 from user_agents import parse
+import time
+from datetime import datetime, timedelta
+from pyzbar.pyzbar import decode
+from PIL import Image, ImageOps
+import io
+import logging
+import numpy as np
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 dm = DatabaseManager()
 dm.connect()
@@ -8,11 +20,11 @@ dm.create_tables()
 
 app = Flask(__name__)
 
-
 products = dm.get_all_products()
 products.sort(key=lambda x: x['product_name'])
 
 # cart = []
+
 
 @app.route('/')
 def index():
@@ -28,8 +40,21 @@ def index():
         if (search_query.lower() in p['product_name'].lower()) and
            (selected_category == '' or p['product_type'] == selected_category)
     ]
+
+    # today = datetime.now().date()
+    # cutoff_date = today + datetime.timedelta(days=days)
+    # now = datetime.now()
+    # current_time = now.strftime("%H:%M")
+    # if current_time == '6:00':
+    #     exp_products_3 = dm.get_products_expiring_soon(3)
+    #     exp_products_2 = dm.get_products_expiring_soon(2)
+    #     exp_products_1 = dm.get_products_expiring_soon(1)
+    #     exp_products_0 = dm.get_products_expiring_soon(0)
+    #     print(exp_products_3)
+    #     print(1)
+
     return render_template('index.html', products=filtered_products, search_query=search_query,
-                           product_type=selected_category, parameter_value=parameter_value)
+                           product_type=selected_category, parameter_value=parameter_value, today_date='')
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
@@ -75,5 +100,39 @@ def qr():
     return render_template('qr.html',  parameter_value=parameter_value)
 
 
+@app.route('/upload', methods=['POST'])
+def upload():
+    try:
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image part'}), 400
+
+        file = request.files['image']
+        if not file or file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        # Чтение и обработка изображения
+        file_stream = file.read()
+        img = process_image(file_stream)
+        if not img:
+            return jsonify({'error': 'Invalid image'}), 400
+
+        # Декодирование с обработкой исключений
+        qr_codes = safe_qr_decode(img)
+
+        if qr_codes:
+            qr_data = qr_codes[0].data.decode('utf-8')
+            logger.info(f"Decoded QR: {qr_data}")
+            return jsonify({'success': True, 'qr_data': qr_data})
+
+        return jsonify({'success': False, 'message': 'QR code not found'})
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        return jsonify({'error': 'Server error'}), 500
+
+
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0')
+    app.run(host='0.0.0.0',
+        port=5000,
+        debug=False,  # Важно для production!
+        threaded=True)

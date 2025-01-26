@@ -126,11 +126,11 @@ footer {
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 80%;
+    top: 88%;
     left: 30px;
     right: 30px;
     bottom: 1px;
-    height: 20%;
+    height: 10%;
     background-image: url('../img/aaaa.png');
     background-size: cover;
     background-repeat: no-repeat;
@@ -197,6 +197,7 @@ footer {
 .icon-button:hover img, .icon-button1:hover img, .icon-buttonfooter:hover img {
     transform: scale(1.8);
 }
+
 
 
 /* заголовки */
@@ -292,4 +293,3 @@ p {
     padding: 426px 20px;
     }
 }
-
