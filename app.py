@@ -34,11 +34,13 @@ def index():
     search_query = request.args.get('search', '')
     selected_category = request.args.get('product_type', '')
 
-    filtered_products = [
-        p for p in products
-        if (search_query.lower() in p['product_name'].lower()) and
-           (selected_category == '' or p['product_type'] == selected_category)
-    ]
+    filtered_products = []
+    for p in products:
+        if ((search_query.lower() in p['product_name'].lower())
+                and (selected_category == '' or p['product_type'] == selected_category)):
+            if p['unit'] == 'шт.':
+                p['quantity'] = int(p['quantity'])
+            filtered_products.append(p)
 
     current_date = datetime.now()
     for e in products:

@@ -56,6 +56,7 @@
             {% for product in products %}
                 <div class="product-card">
                     <h2>  {{ product.product_name }}</h2>
+                    <h4>В наличии {{product.quantity}}  {{product.unit}}</h4>
                     <h4> осталось {{ product.days }} дней</h4>
                     <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
 
