@@ -126,11 +126,11 @@ footer {
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 88%;
+    top: 87%;
     left: 30px;
     right: 30px;
     bottom: 1px;
-    height: 10%;
+    height: 11%;
     background-image: url('../img/aaaa.png');
     background-size: cover;
     background-repeat: no-repeat;
@@ -199,13 +199,13 @@ footer {
 }
 
 
-
 /* заголовки */
 h1, h2, h3, h4, h5, h6 {
     font-family: "Courier New", Courier, monospace;
     font-weight: bold;
     color: #412d39;
     text-align: center;
+    line-height: 4px;
 }
 
 /* текст */

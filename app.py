@@ -25,7 +25,6 @@ products.sort(key=lambda x: x['product_name'])
 
 # cart = []
 
-
 @app.route('/')
 def index():
     user_agent = request.headers.get('User-Agent')
@@ -41,6 +40,15 @@ def index():
            (selected_category == '' or p['product_type'] == selected_category)
     ]
 
+    current_date = datetime.now()
+    for e in products:
+        exp_date = datetime.strptime(e['expiry_date'], "%Y-%m-%d")
+        days_remaining = (exp_date - current_date).days
+        if days_remaining > 0:
+            e['days'] = days_remaining
+        else:
+            e['days'] = 0
+
     # today = datetime.now().date()
     # cutoff_date = today + datetime.timedelta(days=days)
     # now = datetime.now()
@@ -54,7 +62,7 @@ def index():
     #     print(1)
 
     return render_template('index.html', products=filtered_products, search_query=search_query,
-                           product_type=selected_category, parameter_value=parameter_value, today_date='')
+                           product_type=selected_category, parameter_value=parameter_value)
 
 @app.route('/product/<int:product_id>')
 def product(product_id):

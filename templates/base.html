@@ -45,6 +45,7 @@
                 <option value="Мясо" > мясо </option>
                 <option value="Овощ" > овощи </option>
                 <option value="Фрукт" > фрукты </option>
+                <option value="Ягода" > ягоды </option>
             </select>
             <button class="search-bar1" type="submit">Поиск</button>
         </form>
@@ -54,8 +55,11 @@
             {% block maininfo %}<div class="product-list">
             {% for product in products %}
                 <div class="product-card">
-                    <h2>{{ product.product_name }}</h2>
-                    <a href="{{ url_for('product', product_id=product.id) }}" class="btn">Подробнее</a>
+                    <h2>  {{ product.product_name }}</h2>
+                    <h4> осталось {{ product.days }} дней</h4>
+                    <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
+
+
                 </div>
             {% endfor %}
         </div>{% endblock %}
