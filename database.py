@@ -79,20 +79,20 @@ class DatabaseManager:
             return False, f"Ошибка добавления продукта: {e}"
 
     def remove_product(self, product_id):
-        """Удаляет продукт из таблицы products по ID."""
+        """Устанавливает количество продукта в 0 по ID."""
         if not self.conn or not self.cursor:
-            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
-            self.cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+            self.cursor.execute("UPDATE products SET quantity = 0 WHERE id = ?", (product_id,))
             self.conn.commit()
             if self.cursor.rowcount > 0:
-                return True, "Продукт успешно удален из холодильника."
+                return True, "Количество продукта установлено в 0."
             else:
                 return False, "Продукт с таким id не найден в холодильнике."
         except Exception as e:
-            self.conn.rollback()
-            return False, f"Ошибка удаления продукта: {e}"
+             self.conn.rollback()
+             return False, f"Ошибка при обновлении количества продукта: {e}"
 
     def get_all_products(self):
         """Получает все продукты из таблицы products."""
@@ -224,4 +224,41 @@ class DatabaseManager:
             product = self._row_to_dict(row)
             products.append(product)
         return products
+
+    def get_consumption_analytics(self, start_date, end_date):
+        """Получает аналитику потребления продуктов за указанный период."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        self.cursor.execute("""
+            SELECT
+                SUM(CASE WHEN quantity > 0 THEN 1 ELSE 0 END) as added_positive_quantity_count,
+                SUM(CASE WHEN quantity = 0 THEN 1 ELSE 0 END) as removed_count
+            FROM products
+            WHERE added_at BETWEEN ? AND ?
+
+        """, (start_date, end_date))
+
+        added_data = self.cursor.fetchone()
+
+        self.cursor.execute("""
+           SELECT
+                product_name,
+                SUM(quantity) as quantity_diff
+            FROM products
+            WHERE added_at BETWEEN ? AND ?
+            GROUP BY product_name
+        """, (start_date, end_date))
+
+        quantity_diffs = self.cursor.fetchall()
+
+        return {
+            "added_positive_quantity_count": added_data[0] if added_data else 0,
+            "removed_count": added_data[1] if added_data else 0,
+            "quantity_diffs": [{"product_name": item[0], "quantity_diff": item[1]} for item in quantity_diffs]
+        }
+
+
+
+
 
