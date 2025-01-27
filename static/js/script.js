@@ -34,10 +34,32 @@ $(document).ready(function() {
 
                     } else {
                         $('#product_name').html(response.message);
+                        $('#full_information').html('');
+                        $('#product_type').html('');
+                        $('#manufacture_date').html('');
+                        $('#expiry_date').html('');
+                        $('#quantity_unit').html('');
+                        $('#measurement_type').html('');
+                        $('#nutrition_info').html('');
+                        $('#calories').html('');
+                        $('#proteins').html('');
+                        $('#fats').html('');
+                        $('#carbohydrates').html('');
                     }
                 },
                 error: function(xhr, status, error) {
                     $('#product_name').html('Error processing image. Please try again.');
+                    $('#full_information').html('');
+                    $('#product_type').html('');
+                    $('#manufacture_date').html('');
+                    $('#expiry_date').html('');
+                    $('#quantity_unit').html('');
+                    $('#measurement_type').html('');
+                    $('#nutrition_info').html('');
+                    $('#calories').html('');
+                    $('#proteins').html('');
+                    $('#fats').html('');
+                    $('#carbohydrates').html('');
                 }
             });
         }
