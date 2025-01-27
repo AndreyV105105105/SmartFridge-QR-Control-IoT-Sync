@@ -225,3 +225,6 @@ class DatabaseManager:
             products.append(product)
         return products
 
+
+
+
