@@ -46,6 +46,8 @@
                 <option value="Овощ" > овощи </option>
                 <option value="Фрукт" > фрукты </option>
                 <option value="Ягода" > ягоды </option>
+                <option value="Хлеб" > хлеб </option>
+                <option value="Молочка" > молочка </option>
             </select>
             <button class="search-bar1" type="submit">Поиск</button>
         </form>
@@ -59,8 +61,6 @@
                     <h4>В наличии {{product.quantity}}  {{product.unit}}</h4>
                     <h4> осталось {{ product.days }} дней</h4>
                     <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
-
-
                 </div>
             {% endfor %}
         </div>{% endblock %}
