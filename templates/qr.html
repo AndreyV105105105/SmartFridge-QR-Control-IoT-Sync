@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+
+{% block maininfo %}
         <h1>QR Code Scanner</h1>
     <button id="openCameraButton">Open Camera</button>
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
@@ -27,5 +23,4 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
-</body>
-</html>
+{% endblock %}
