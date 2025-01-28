@@ -118,6 +118,7 @@ header {
     outline-offset: 5px;
     text-align: justify;
     text-align-last: center;
+    flex-wrap: wrap;
 }
 
 /* Нижнее поле */
@@ -130,7 +131,6 @@ footer {
     left: 30px;
     right: 30px;
     bottom: 1px;
-    height: 11%;
     background-image: url('../img/aaaa.png');
     background-size: cover;
     background-repeat: no-repeat;
@@ -200,14 +200,13 @@ footer {
 
 
 /* заголовки */
-h1, h2, h3, h4, h5, h6 {
+h1, h6, h4, h5, h2, h3 {
     font-family: "Courier New", Courier, monospace;
     font-weight: bold;
     color: #412d39;
     text-align: center;
     line-height: 1px;
 }
-
 /* текст */
 p {
     justify-content: center;
@@ -231,6 +230,7 @@ p {
     top: 90px;
     padding: 10px ;
     border: none;
+    color: #717179;
     border-radius: 12px 12px 2px 2px;
     background-color: #f3eee4;
     font-size: 16px;
@@ -245,6 +245,7 @@ p {
     top: 90px;
     padding: 10px ;
     border: none;
+    color: #717179;
     border-radius: 12px 12px 2px 2px;
     background-color: #f3eee4;
     font-size: 16px;
@@ -275,7 +276,6 @@ p {
         right: 10px;
         padding: 15px;
     }
-    }
     .icon-buttonfooter {
         padding: 10px 10px;
     }
@@ -292,4 +292,62 @@ p {
     right: 10px;
     padding: 426px 20px;
     }
+}
+/* Общие стили для страницы */
+body {
+    margin: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f3eee4;
+    border-radius: 12px;
+    border: 1px solid #412d39;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для кнопки */
+.btn {
+    display: inline-block;
+    padding: 10px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #412d39;
+    border: none;
+    border-radius: 12px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #5a3d4a;
+}
+
+/* Стили для разделов */
+.container p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+
+.product-card {
+    background-color: #f3eee4;
+    border: 1px solid #412d39;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.product-card a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #412d39;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
 }
