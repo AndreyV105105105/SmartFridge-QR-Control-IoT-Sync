@@ -1,27 +1,26 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>{{ product.product_name }}</h1>
-        <p> Подробная информация: </p>
-        <p> Тип: {{ product.product_type}}</p>
-        <p> Дата изготовления: {{ product.manufacture_date}}</p>
-        <p> Дата истечения срока годности: {{ product.expiry_date}}</p>
-        <p> Масса/Объём: {{ product.quantity}}, {{ product.unit}} </p>
-        <p> Тип измерения: {{ product.measurement_type}} </p>
-        <h2> Пищевая ценность: </h2>
-        <p>Калории: {{ product.nutrition_info.calories }} </p>
-        <p>Белки: {{ product.nutrition_info.proteins }} </p>
-        <p>Жиры: {{ product.nutrition_info.fats }} </p>
-        <p>Углеводы: {{ product.nutrition_info.carbohydrates }} </p>
+{% extends 'base.html' %}
 
-        <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
+
+{% block maininfo %}
+        <h1>QR Code Scanner</h1>
+    <button id="openCameraButton">Open Camera</button>
+    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
+    <div>
+        <h1 id="product_name"></h1>
+        <p id="full_information"></p>
+        <p id="product_type"></p>
+        <p id="manufacture_date"></p>
+        <p id="expiry_date"></p>
+        <p id="quantity_unit"></p>
+        <p id="measurement_type"> </p>
+        <h2 id="nutrition_info"> </h2>
+        <p id="calories"></p>
+        <p id="proteins"> </p>
+        <p id="fats"> </p>
+        <p id="carbohydrates"> </p>
     </div>
-</body>
-</html>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
+{% endblock %}
