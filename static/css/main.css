@@ -254,18 +254,23 @@ p {
     outline-offset: 5px;
 }
 
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .product-card {
     background-color: #e9ecef;
     border-radius: 5px;
     padding: 15px;
     margin: 10px;
-    max-width: 400px;
+    max-width: 22%;
     height: 100px;
     flex: 1 1 calc(30% - 20px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Медиа-запросы для мобильных устройств */
+/* для мобильных устройств */
 @media (max-width: 768px) {
     .logo {
         font-size: 20px;
@@ -292,6 +297,19 @@ p {
     right: 10px;
     padding: 426px 20px;
     }
+    .product-list {
+    display:inline;
+    }
+    .product-card {
+    background-color: #e9ecef;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    max-width: 400px;
+    height: 100px;
+    flex: 1 1 calc(30% - 20px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 }
 /* Общие стили для страницы */
 body {
@@ -350,4 +368,5 @@ body {
     text-decoration: none;
     border-radius: 12px;
     transition: background-color 0.3s ease;
+
 }
