@@ -33,6 +33,7 @@ class DatabaseManager:
                 product_type TEXT NOT NULL,
                 manufacture_date DATE NOT NULL,
                 expiry_date DATE NOT NULL,
+                number REAL NOT NULL,
                 quantity REAL NOT NULL,
                 unit TEXT NOT NULL,
                 nutrition_info TEXT,
@@ -51,7 +52,7 @@ class DatabaseManager:
        """)
         self.conn.commit()
 
-    def add_product(self, product_data):
+    def add_product(self, product_data, k=1):
         """Добавляет продукт в таблицу products."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
@@ -61,13 +62,14 @@ class DatabaseManager:
             added_history = json.dumps({str(product_data["quantity"]): datetime.now().isoformat()})
 
             self.cursor.execute("""
-                INSERT INTO products (product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type, added_history, removed_history)
+                INSERT INTO products (product_name, product_type, manufacture_date, expiry_date, number, quantity, unit, nutrition_info, measurement_type, added_history, removed_history)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 product_data["product_name"],
                 product_data["product_type"],
                 product_data["manufacture_date"],
                 product_data["expiry_date"],
+                k,
                 product_data["quantity"],
                 product_data["unit"],
                 nutrition_info_json,
@@ -106,12 +108,12 @@ class DatabaseManager:
                 return False, f"Продукт с id = {product_id} не найден"
 
             removed_history = json.loads(current_product.get("removed_history", "{}"))
-            removed_history[str(current_product["quantity"])] = datetime.now().isoformat()
+            removed_history[str(current_product["number"])] = datetime.now().isoformat()
             removed_history_json = json.dumps(removed_history)
 
             self.cursor.execute("""
                 UPDATE products
-                SET quantity = 0,
+                SET number = 0,
                 removed_history = ?
                 WHERE id = ?
             """, (removed_history_json, product_id,))
@@ -124,7 +126,7 @@ class DatabaseManager:
             self.conn.rollback()
             return False, f"Ошибка при обновлении количества продукта: {e}"
 
-    def update_product_quantity(self, product_id, new_quantity):
+    def update_product_number(self, product_id, new_quantity):
         """Обновляет количество продукта."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
