@@ -20,13 +20,14 @@ dm.create_tables()
 
 app = Flask(__name__)
 
-products = dm.get_all_products()
-products.sort(key=lambda x: x['product_name'])
+products = []
 
 # cart = []
 
 @app.route('/')
 def index():
+    products = dm.get_all_products()
+    products.sort(key=lambda x: x['product_name'])
     user_agent = request.headers.get('User-Agent')
     user_agent_parsed = parse(user_agent)
     parameter_value = user_agent_parsed.is_mobile
@@ -68,6 +69,8 @@ def index():
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
+    products = dm.get_all_products()
+    products.sort(key=lambda x: x['product_name'])
     user_agent = request.headers.get('User-Agent')
     user_agent_parsed = parse(user_agent)
     parameter_value = user_agent_parsed.is_mobile  # Определяем parameter_value
