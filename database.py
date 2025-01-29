@@ -1,7 +1,7 @@
 import sqlite3
 import json
 from datetime import datetime, timedelta
-# import uuid
+import uuid
 
 
 class DatabaseManager:
@@ -12,7 +12,7 @@ class DatabaseManager:
 
     def connect(self):
         """Устанавливает соединение с БД."""
-        self.conn = sqlite3.connect(self.db_name)
+        self.conn = sqlite3.connect(self.db_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
     def close(self):
@@ -37,7 +37,8 @@ class DatabaseManager:
                 unit TEXT NOT NULL,
                 nutrition_info TEXT,
                 measurement_type TEXT NOT NULL,
-                added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                added_history TEXT,
+                removed_history TEXT
             )
         """)
         self.cursor.execute("""
@@ -56,10 +57,12 @@ class DatabaseManager:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
-            nutrition_info_json = json.dumps(product_data.get('nutrition_info', {}))  # Преобразуем словарь в JSON
+            nutrition_info_json = json.dumps(product_data.get('nutrition_info', {}))
+            added_history = json.dumps({str(product_data["quantity"]): datetime.now().isoformat()})
+
             self.cursor.execute("""
-                INSERT INTO products (product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO products (product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type, added_history, removed_history)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 product_data["product_name"],
                 product_data["product_type"],
@@ -68,7 +71,9 @@ class DatabaseManager:
                 product_data["quantity"],
                 product_data["unit"],
                 nutrition_info_json,
-                product_data["measurement_type"]
+                product_data["measurement_type"],
+                added_history,
+                json.dumps({})
             )
                                 )
 
@@ -81,18 +86,31 @@ class DatabaseManager:
     def remove_product(self, product_id):
         """Устанавливает количество продукта в 0 по ID."""
         if not self.conn or not self.cursor:
-             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
-            self.cursor.execute("UPDATE products SET quantity = 0 WHERE id = ?", (product_id,))
+            current_product = self.get_product_by_id(product_id)
+            if not current_product:
+                return False, f"Продукт с id = {product_id} не найден"
+
+            removed_history = json.loads(current_product.get("removed_history", "{}"))
+            removed_history[str(current_product["quantity"])] = datetime.now().isoformat()
+            removed_history_json = json.dumps(removed_history)
+
+            self.cursor.execute("""
+                UPDATE products
+                SET quantity = 0,
+                removed_history = ?
+                WHERE id = ?
+            """, (removed_history_json, product_id,))
             self.conn.commit()
             if self.cursor.rowcount > 0:
                 return True, "Количество продукта установлено в 0."
             else:
                 return False, "Продукт с таким id не найден в холодильнике."
         except Exception as e:
-             self.conn.rollback()
-             return False, f"Ошибка при обновлении количества продукта: {e}"
+            self.conn.rollback()
+            return False, f"Ошибка при обновлении количества продукта: {e}"
 
     def get_all_products(self):
         """Получает все продукты из таблицы products."""
@@ -118,6 +136,18 @@ class DatabaseManager:
         else:
             return None
 
+    def get_product_in_bd(self, product_name, expiry_date):
+        """Получает продукт из таблицы products по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        self.cursor.execute("SELECT * FROM products WHERE product_name = ? AND expiry_date = ?",
+                            (product_name, expiry_date,))
+        row = self.cursor.fetchone()
+        if row:
+            return self._row_to_dict(row)
+        else:
+            return None
+
     def _row_to_dict(self, row):
         """Преобразует строку из БД в словарь."""
         nutrition_info = row[7]
@@ -131,30 +161,31 @@ class DatabaseManager:
             "unit": row[6],
             "nutrition_info": json.loads(nutrition_info) if nutrition_info else None,
             "measurement_type": row[8],
-            "added_at": row[9]
+            "added_history": json.loads(row[9]) if row[9] else None,
+            "removed_history": json.loads(row[10]) if row[10] else None
         }
 
-    # def search_products(self, search_term=None, search_type=None):
-    #     """Поиск продуктов по названию и/или типу."""
-    #     if not self.conn or not self.cursor:
-    #         raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
-    #     query = "SELECT * FROM products WHERE 1=1"
-    #     params = []
-    #     if search_term:
-    #         query += " AND product_name LIKE ?"
-    #         params.append(f"%{search_term}%")
-    #     if search_type:
-    #         query += " AND product_type LIKE ?"
-    #         params.append(f"%{search_type}%")
-    #
-    #     self.cursor.execute(query, params)
-    #     rows = self.cursor.fetchall()
-    #     products = []
-    #     for row in rows:
-    #         product = self._row_to_dict(row)
-    #         products.append(product)
-    #
-    #     return products
+    def search_products(self, search_term=None, search_type=None):
+        """Поиск продуктов по названию и/или типу."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        query = "SELECT * FROM products WHERE 1=1"
+        params = []
+        if search_term:
+            query += " AND product_name LIKE ?"
+            params.append(f"%{search_term}%")
+        if search_type:
+            query += " AND product_type LIKE ?"
+            params.append(f"%{search_type}%")
+
+        self.cursor.execute(query, params)
+        rows = self.cursor.fetchall()
+        products = []
+        for row in rows:
+            product = self._row_to_dict(row)
+            products.append(product)
+
+        return products
 
     def add_to_shopping_list(self, product_name, quantity):
         """Добавляет продукт в список покупок."""
@@ -209,7 +240,7 @@ class DatabaseManager:
             "added_at": row[3]
         }
 
-    def get_products_expiring_soon(self, days=1):
+    def get_products_expiring_soon(self, days=7):
         """Получает продукты, у которых истекает срок годности в течение days дней."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
@@ -230,35 +261,61 @@ class DatabaseManager:
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
-        self.cursor.execute("""
-            SELECT
-                SUM(CASE WHEN quantity > 0 THEN 1 ELSE 0 END) as added_positive_quantity_count,
-                SUM(CASE WHEN quantity = 0 THEN 1 ELSE 0 END) as removed_count
-            FROM products
-            WHERE added_at BETWEEN ? AND ?
+        start_datetime = datetime.fromisoformat(start_date)
+        end_datetime = datetime.fromisoformat(end_date)
 
-        """, (start_date, end_date))
+        self.cursor.execute("SELECT * FROM products")
+        rows = self.cursor.fetchall()
 
-        added_data = self.cursor.fetchone()
+        added_count = 0
+        added_positive_quantity_count = 0
+        removed_count = 0
+        quantity_diffs = {}
 
-        self.cursor.execute("""
-           SELECT
-                product_name,
-                SUM(quantity) as quantity_diff
-            FROM products
-            WHERE added_at BETWEEN ? AND ?
-            GROUP BY product_name
-        """, (start_date, end_date))
+        for row in rows:
+            product = self._row_to_dict(row)
+            if product["added_history"]:
+                for quantity, date_str in product["added_history"].items():
+                    added_date = datetime.fromisoformat(date_str)
+                    if start_datetime <= added_date <= end_datetime:
+                        added_count += 1
+                        if float(quantity) > 0:
+                            added_positive_quantity_count += 1
 
-        quantity_diffs = self.cursor.fetchall()
+            if product["removed_history"]:
+                for quantity, date_str in product["removed_history"].items():
+                    removed_date = datetime.fromisoformat(date_str)
+                    if start_datetime <= removed_date <= end_datetime:
+                        removed_count += 1
+
+            if product["added_history"]:
+                last_added_quantity = 0
+                last_added_date = None
+                for quantity, date_str in product["added_history"].items():
+                    added_date = datetime.fromisoformat(date_str)
+                    if start_datetime <= added_date <= end_datetime:
+                        if not last_added_date or added_date > last_added_date:
+                            last_added_quantity = float(quantity)
+                            last_added_date = added_date
+                if last_added_quantity != 0:
+                    quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
+                                                                                 0) + last_added_quantity
+            if product["removed_history"]:
+                last_removed_quantity = 0
+                last_removed_date = None
+                for quantity, date_str in product["removed_history"].items():
+                    removed_date = datetime.fromisoformat(date_str)
+                    if start_datetime <= removed_date <= end_datetime:
+                        if not last_removed_date or removed_date > last_removed_date:
+                            last_removed_quantity = float(quantity)
+                            last_removed_date = removed_date
+                if last_removed_quantity != 0:
+                    quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
+                                                                                 0) - last_removed_quantity
 
         return {
-            "added_positive_quantity_count": added_data[0] if added_data else 0,
-            "removed_count": added_data[1] if added_data else 0,
-            "quantity_diffs": [{"product_name": item[0], "quantity_diff": item[1]} for item in quantity_diffs]
+            "added_count": added_count,
+            "added_positive_quantity_count": added_positive_quantity_count,
+            "removed_count": removed_count,
+            "quantity_diffs": [{"product_name": name, "quantity_diff": diff} for name, diff in quantity_diffs.items()]
         }
-
-
-
-
-
