@@ -113,6 +113,14 @@ def qr():
     return render_template('qr.html',  parameter_value=parameter_value)
 
 
+@app.route('/usebd/', methods=['POST'])
+def use_bd():
+    sp = request.json
+    item = dm.get_product_in_bd(sp['product_name'], sp['expiry_date'])
+    print(item)
+    return jsonify(item)
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     try:

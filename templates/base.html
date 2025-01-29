@@ -78,16 +78,16 @@
         const parameterValue = {{ parameter_value | tojson }};
 
         // Функция для управления видимостью и доступностью кнопки
-        function updateButtonVisibility(isVisible) {
-            const button = document.getElementById('myButton');
-            if (isVisible) {
-                button.classList.remove('hidden');
-                button.disabled = false; // Делаем кнопку доступной
-            } else {
-                button.classList.add('hidden');
-                button.disabled = true; // Делаем кнопку недоступной
-            }
-        }
+<!--        function updateButtonVisibility(isVisible) {-->
+<!--            const button = document.getElementById('myButton');-->
+<!--            if (isVisible) {-->
+<!--                button.classList.remove('hidden');-->
+<!--                button.disabled = false; // Делаем кнопку доступной-->
+<!--            } else {-->
+<!--                button.classList.add('hidden');-->
+<!--                button.disabled = true; // Делаем кнопку недоступной-->
+<!--            }-->
+<!--        }-->
 
         // Используем значение параметра
         updateButtonVisibility(parameterValue);

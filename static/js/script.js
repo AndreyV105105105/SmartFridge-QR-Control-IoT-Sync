@@ -1,3 +1,29 @@
+"use strict"
+
+
+function use_bd(product_name, expiry_date) {
+    return fetch(`/usebd/`, {
+        method: 'POST',
+        headers: {
+           'Content-Type': 'application/json',
+           'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+           product_name: product_name,
+           expiry_date: expiry_date
+        })
+    }).then(async (response) => {
+        return await response.json();
+    });
+}
+
+
+function getCSRFToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfToken ? csrfToken.value : '';
+}
+
+
 $(document).ready(function() {
     $('#openCameraButton').click(function() {
         $('#cameraInput').click();
@@ -15,7 +41,7 @@ $(document).ready(function() {
                 data: formData,
                 contentType: false,
                 processData: false,
-                success: function(response) {
+                success: async function(response) {
                     if (response.success) {
                         const ex = JSON.parse(response.qr_data)
                         $('#product_name').html(ex['product_name']);
@@ -26,11 +52,13 @@ $(document).ready(function() {
                         $('#quantity_unit').html('масса/объем, ед. измерения: ' + ex['quantity'] + ', ' +  ex['unit']);
                         $('#measurement_type').html('Тип измерения: ' + ex['measurement_type']);
                         $('#nutrition_info').html('Пищевая ценность: ');
-                        $('#calories').html('Калории: ' + ex['nutrition_info']["калории"]);
-                        $('#proteins').html('Белки: ' + ex['nutrition_info']["белки"]);
-                        $('#fats').html('Жиры: ' + ex['nutrition_info']["жиры"]);
-                        $('#carbohydrates').html('Углеводы: ' + ex['nutrition_info']["углеводы"]);
-
+                        $('#calories').html('Калории: ' + ex['nutrition_info']["calories"]);
+                        $('#proteins').html('Белки: ' + ex['nutrition_info']["proteins"]);
+                        $('#fats').html('Жиры: ' + ex['nutrition_info']["fats"]);
+                        $('#carbohydrates').html('Углеводы: ' + ex['nutrition_info']["carbohydrates"]);
+                        const item = await use_bd(ex['product_name'], ex['expiry_date']);
+                        console.log(item);
+                        $('#test').html(item['product_name']);
 
                     } else {
                         $('#product_name').html(response.message);
@@ -45,6 +73,7 @@ $(document).ready(function() {
                         $('#proteins').html('');
                         $('#fats').html('');
                         $('#carbohydrates').html('');
+                        $('#test').html('');
                     }
                 },
                 error: function(xhr, status, error) {
@@ -60,6 +89,7 @@ $(document).ready(function() {
                     $('#proteins').html('');
                     $('#fats').html('');
                     $('#carbohydrates').html('');
+                    $('#test').html('');
                 }
             });
         }
