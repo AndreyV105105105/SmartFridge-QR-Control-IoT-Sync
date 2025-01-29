@@ -162,6 +162,18 @@ class DatabaseManager:
         else:
             return None
 
+    def get_product_in_bd(self, product_name, expiry_date):
+        """Получает продукт из таблицы products по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        self.cursor.execute("SELECT * FROM products WHERE product_name = ? AND expiry_date = ?", (product_name, expiry_date,))
+        row = self.cursor.fetchone()
+        if row:
+            return self._row_to_dict(row)
+        else:
+            return None
+
+
     def _row_to_dict(self, row):
         """Преобразует строку из БД в словарь."""
         nutrition_info = row[8]
