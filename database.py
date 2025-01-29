@@ -12,7 +12,7 @@ class DatabaseManager:
 
     def connect(self):
         """Устанавливает соединение с БД."""
-        self.conn = sqlite3.connect(self.db_name)
+        self.conn = sqlite3.connect(self.db_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
     def close(self):
@@ -50,7 +50,7 @@ class DatabaseManager:
        """)
         self.conn.commit()
 
-    def add_product(self, product_data):
+    def add_product_in_bd(self, product_data):
         """Добавляет продукт в таблицу products."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
@@ -112,6 +112,17 @@ class DatabaseManager:
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
         self.cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
+        row = self.cursor.fetchone()
+        if row:
+            return self._row_to_dict(row)
+        else:
+            return None
+
+    def get_product_in_bd(self, product_name, expiry_date):
+        """Получает продукт из таблицы products по ID."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        self.cursor.execute("SELECT * FROM products WHERE product_name = ? AND expiry_date = ?", (product_name, expiry_date,))
         row = self.cursor.fetchone()
         if row:
             return self._row_to_dict(row)

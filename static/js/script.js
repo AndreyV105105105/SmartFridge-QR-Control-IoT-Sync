@@ -18,6 +18,27 @@ function use_bd(product_name, expiry_date) {
 }
 
 
+function add_product(product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type) {
+    return fetch(`/addproduct/`, {
+        method: 'POST',
+        headers: {
+           'Content-Type': 'application/json',
+           'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+           product_name: product_name,
+           product_type: product_type,
+           manufacture_date: manufacture_date,
+           expiry_date: expiry_date,
+           quantity: quantity,
+           unit: unit,
+           nutrition_info: nutrition_info,
+           measurement_type: measurement_type
+        })
+    })
+}
+
+
 function getCSRFToken() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
     return csrfToken ? csrfToken.value : '';
@@ -58,7 +79,11 @@ $(document).ready(function() {
                         $('#carbohydrates').html('Углеводы: ' + ex['nutrition_info']["carbohydrates"]);
                         const item = await use_bd(ex['product_name'], ex['expiry_date']);
                         console.log(item);
-                        $('#test').html(item['product_name']);
+                        if (!item)
+                            add_product(ex['product_name'], ex['product_type'], ex['manufacture_date'], ex['expiry_date'], ex['quantity'], ex['unit'], ex['nutrition_info'], ex['measurement_type'])
+                            {$('#test').html('ДОБАВЛЕНО');}
+
+//                        $('#test').html(item['product_name']);
 
                     } else {
                         $('#product_name').html(response.message);

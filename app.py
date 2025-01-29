@@ -121,6 +121,15 @@ def use_bd():
     return jsonify(item)
 
 
+@app.route('/addproduct/', methods=['POST'])
+def add_product():
+    sp = request.json
+    print(1, sp)
+    dm.add_product_in_bd(sp)
+    return sp
+
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
