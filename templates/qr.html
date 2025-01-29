@@ -1,18 +1,26 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+
+{% block maininfo %}
         <h1>QR Code Scanner</h1>
     <button id="openCameraButton">Open Camera</button>
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
-    <div id="result"></div>
+    <div>
+        <h1 id="product_name"></h1>
+        <p id="full_information"></p>
+        <p id="product_type"></p>
+        <p id="manufacture_date"></p>
+        <p id="expiry_date"></p>
+        <p id="quantity_unit"></p>
+        <p id="measurement_type"> </p>
+        <h2 id="nutrition_info"> </h2>
+        <p id="calories"></p>
+        <p id="proteins"> </p>
+        <p id="fats"> </p>
+        <p id="carbohydrates"> </p>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
-</body>
-</html>
+{% endblock %}

@@ -68,9 +68,12 @@ def index():
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
-    product_info = next((p for p in products if p['id'] == product_id), None)
-    return render_template('product.html', product=product_info)
+    user_agent = request.headers.get('User-Agent')
+    user_agent_parsed = parse(user_agent)
+    parameter_value = user_agent_parsed.is_mobile  # Определяем parameter_value
 
+    product_info = next((p for p in products if p['id'] == product_id), None)
+    return render_template('product.html', product=product_info, parameter_value=parameter_value)
 # Страница уведомлений
 @app.route('/notifications')
 def notifications():
