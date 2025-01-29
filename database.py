@@ -1,7 +1,6 @@
 import sqlite3
 import json
 from datetime import datetime, timedelta
-import uuid
 
 
 class DatabaseManager:
@@ -335,3 +334,12 @@ class DatabaseManager:
             "removed_count": removed_count,
             "quantity_diffs": [{"product_name": name, "quantity_diff": diff} for name, diff in quantity_diffs.items()]
         }
+
+
+
+
+
+
+
+
+
