@@ -114,27 +114,35 @@ class DatabaseManager:
             self.conn.rollback()
             return False, f"Ошибка при обновлении количества продукта: {e}"
 
-    def update_product_quantity(self, product_id, new_number):
+    def update_product_quantity(self, product_name, expiry_date, status_number=True):
         """Обновляет количество продукта."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
-            current_product = self.get_product_by_id(product_id)
+            current_product = self.get_product_in_bd(product_name, expiry_date)
             if not current_product:
-                return False, f"Продукт с id = {product_id} не найден"
-            added_history = json.loads(current_product.get("added_history", "{}"))
-            added_history[str(new_number)] = datetime.now().isoformat()
+                return False, f"Продукт с name = {product_name} и expiry_date = {expiry_date} не найден"
+            self.cursor.execute("SELECT number FROM products WHERE product_name = ? AND expiry_date = ?",
+                                (product_name, expiry_date,))
+            now_number = int(self.cursor.fetchone()[0])
+            if status_number:
+                now_number += 1
+            else:
+                now_number -= 1
+            print(now_number)
+            n = current_product.get("added_history", "{}")
+            added_history = json.loads(n)
+            added_history[str(now_number)] = datetime.now().isoformat()
             added_history_json = json.dumps(added_history)
-
             self.cursor.execute("""
                   UPDATE products
                   SET number = ?,
                   added_history = ?
-                  WHERE id = ?
-                """, (new_number, added_history_json, product_id))
+                  WHERE product_name = ? AND expiry_date = ?
+                """, (now_number, added_history_json, product_name, expiry_date,))
             self.conn.commit()
-            return True, f"Количество продукта с id = {product_id} обновлено"
+            return True, f"Количество продукта с name = {product_name} и expiry_date = {expiry_date} обновлено"
         except Exception as e:
             self.conn.rollback()
             return False, f"Ошибка при обновлении количества продукта: {e}"
@@ -189,8 +197,8 @@ class DatabaseManager:
             "unit": row[7],
             "nutrition_info": json.loads(nutrition_info) if nutrition_info else None,
             "measurement_type": row[9],
-            "added_history": json.loads(row[10]) if row[10] else None,
-            "removed_history": json.loads(row[11]) if row[11] else None
+            "added_history": row[10] if row[10] else None,
+            "removed_history": row[11] if row[11] else None
         }
 
     def search_products(self, search_term=None, search_type=None):
@@ -303,7 +311,9 @@ class DatabaseManager:
         for row in rows:
             product = self._row_to_dict(row)
             if product["added_history"]:
-                for number, date_str in product["added_history"].items():
+                n = row.get("added_history", "{}")
+                added_history = json.loads(n)
+                for number, date_str in added_history.items():
                     added_date = datetime.fromisoformat(date_str)
                     if start_datetime <= added_date <= end_datetime:
                         added_count += 1
@@ -311,7 +321,9 @@ class DatabaseManager:
                             added_positive_quantity_count += 1
 
             if product["removed_history"]:
-                for number, date_str in product["removed_history"].items():
+                n = row.get("removed_history", "{}")
+                removed_history = json.loads(n)
+                for number, date_str in removed_history.items():
                     removed_date = datetime.fromisoformat(date_str)
                     if start_datetime <= removed_date <= end_datetime:
                         removed_count += 1
@@ -319,7 +331,9 @@ class DatabaseManager:
             if product["added_history"]:
                 last_added_quantity = 0
                 last_added_date = None
-                for number, date_str in product["added_history"].items():
+                n = row.get("added_history", "{}")
+                added_history = json.loads(n)
+                for number, date_str in added_history.items():
                     added_date = datetime.fromisoformat(date_str)
                     if start_datetime <= added_date <= end_datetime:
                         if not last_added_date or added_date > last_added_date:
@@ -331,7 +345,9 @@ class DatabaseManager:
             if product["removed_history"]:
                 last_removed_quantity = 0
                 last_removed_date = None
-                for number, date_str in product["removed_history"].items():
+                n = row.get("removed_history", "{}")
+                removed_history = json.loads(n)
+                for number, date_str in removed_history.items():
                     removed_date = datetime.fromisoformat(date_str)
                     if start_datetime <= removed_date <= end_datetime:
                         if not last_removed_date or removed_date > last_removed_date:

@@ -1,3 +1,6 @@
+import json
+import os
+
 from flask import Flask, render_template, url_for, request, Flask, render_template, request, redirect, url_for, jsonify
 from database import DatabaseManager
 from qr_scaner import safe_qr_decode, process_image
@@ -120,16 +123,32 @@ def qr():
 def use_bd():
     sp = request.json
     item = dm.get_product_in_bd(sp['product_name'], sp['expiry_date'])
-    print(item)
+    with open('item.json', 'w', encoding='utf8') as costil:
+        json.dump(item, costil)
     return jsonify(item)
 
 
 @app.route('/addproduct/', methods=['POST'])
 def add_product():
     sp = request.json
-    print(1, sp)
     dm.add_product_in_bd(sp)
     return sp
+
+@app.route('/del_item/', methods=['POST'])
+def delitem():
+    sp = request.json
+    print(1, sp)
+    dm.update_product_quantity(sp['product_name'], sp['expiry_date'], False)
+    return sp
+
+
+@app.route('/add_item/', methods=['POST'])
+def additem():
+    sp = request.json
+    print(1, sp)
+    dm.update_product_quantity(sp['product_name'], sp['expiry_date'], True)
+    return sp
+
 
 
 

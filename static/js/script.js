@@ -1,4 +1,49 @@
 "use strict"
+let json_item;
+
+
+async function delete_item(event) {
+  event.preventDefault();
+  let btn = document.getElementById('delete_btn');
+  let data1 = btn.name;
+  data1 = data1.split('===')
+  return fetch(`/del_item/`, {
+        method: 'POST',
+        headers: {
+           'Content-Type': 'application/json',
+           'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+           product_name: data1[0],
+           expiry_date: data1[1]
+        })
+    }).then(async (response) => {
+        $('#product_status_in_bd').html('Товар успешно удалён!');
+        return await response.json();
+    });
+}
+
+
+async function add_item(event) {
+  event.preventDefault();
+  let btn = document.getElementById('add_btn');
+  let data = btn.name;
+  data = data.split('===')
+  return fetch(`/add_item/`, {
+        method: 'POST',
+        headers: {
+           'Content-Type': 'application/json',
+           'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+           product_name: data[0],
+           expiry_date: data[1]
+        })
+    }).then(async (response) => {
+        $('#product_status_in_bd').html('Товар успешно добавлен!');
+        return await response.json();
+    });
+}
 
 
 function use_bd(product_name, expiry_date) {
@@ -64,7 +109,7 @@ $(document).ready(function() {
                 processData: false,
                 success: async function(response) {
                     if (response.success) {
-                        const ex = JSON.parse(response.qr_data)
+                        var ex = JSON.parse(response.qr_data);
                         $('#product_name').html(ex['product_name']);
                         $('#full_information').html(' Подробная информация: ');
                         $('#product_type').html(' Тип: ' + ex['product_type']);
@@ -77,13 +122,25 @@ $(document).ready(function() {
                         $('#proteins').html('Белки: ' + ex['nutrition_info']["proteins"]);
                         $('#fats').html('Жиры: ' + ex['nutrition_info']["fats"]);
                         $('#carbohydrates').html('Углеводы: ' + ex['nutrition_info']["carbohydrates"]);
+                        $('#product_status_in_bd').html('');
                         const item = await use_bd(ex['product_name'], ex['expiry_date']);
-                        console.log(item);
-                        if (!item)
-                            add_product(ex['product_name'], ex['product_type'], ex['manufacture_date'], ex['expiry_date'], ex['quantity'], ex['unit'], ex['nutrition_info'], ex['measurement_type'])
-                            {$('#test').html('ДОБАВЛЕНО');}
 
-//                        $('#test').html(item['product_name']);
+                        if (!item){
+                            add_product(ex['product_name'], ex['product_type'], ex['manufacture_date'], ex['expiry_date'], ex['quantity'], ex['unit'], ex['nutrition_info'], ex['measurement_type'])
+                            $('#product_status_in_bd').html('ДОБАВЛЕНО');}
+                        else{
+                            let delete_btn = document.getElementById('delete_btn');
+                            let add_btn = document.getElementById('add_btn');
+                            delete_btn.classList.remove('hidden');
+                            delete_btn.disabled = false;
+                            add_btn.classList.remove('hidden');
+                            add_btn.disabled = false;
+                            delete_btn.setAttribute('name', `${ex['product_name']}===${ex['expiry_date']}`);
+                            add_btn.setAttribute('name', `${ex['product_name']}===${ex['expiry_date']}`);
+
+
+
+                        }
 
                     } else {
                         $('#product_name').html(response.message);
@@ -98,7 +155,7 @@ $(document).ready(function() {
                         $('#proteins').html('');
                         $('#fats').html('');
                         $('#carbohydrates').html('');
-                        $('#test').html('');
+                        $('#product_status_in_bd').html('');
                     }
                 },
                 error: function(xhr, status, error) {
@@ -114,7 +171,7 @@ $(document).ready(function() {
                     $('#proteins').html('');
                     $('#fats').html('');
                     $('#carbohydrates').html('');
-                    $('#test').html('');
+                    $('#product_status_in_bd').html('');
                 }
             });
         }

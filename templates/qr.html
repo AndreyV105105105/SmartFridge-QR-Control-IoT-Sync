@@ -18,10 +18,18 @@
         <p id="proteins"> </p>
         <p id="fats"> </p>
         <p id="carbohydrates"></p>
-        <p id="test"></p>
-
+        <button id="delete_btn" onclick="delete_item(event)">Удалить</button><button id="add_btn" onclick="add_item(event)">Добавить</button>
+        <p id="product_status_in_bd"></p>
     </div>
 
+    <script>
+        let delete_btn = document.getElementById('delete_btn');
+        let add_btn = document.getElementById('add_btn');
+        delete_btn.classList.add('hidden');
+        delete_btn.disabled = true;
+        add_btn.classList.add('hidden');
+        add_btn.disabled = true;
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
