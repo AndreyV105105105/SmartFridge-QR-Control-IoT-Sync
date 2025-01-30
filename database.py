@@ -142,7 +142,7 @@ class DatabaseManager:
                   WHERE product_name = ? AND expiry_date = ?
                 """, (now_number, added_history_json, product_name, expiry_date,))
             self.conn.commit()
-            return True, f"Количество продукта с name = {product_name} и expiry_date = {expiry_date} обновлено"
+            return now_number, f"Количество продукта с name = {product_name} и expiry_date = {expiry_date} обновлено"
         except Exception as e:
             self.conn.rollback()
             return False, f"Ошибка при обновлении количества продукта: {e}"

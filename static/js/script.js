@@ -5,44 +5,56 @@ let json_item;
 async function delete_item(event) {
   event.preventDefault();
   let btn = document.getElementById('delete_btn');
-  let data1 = btn.name;
-  data1 = data1.split('===')
+  let data1 = btn.name.split('===');
+
   return fetch(`/del_item/`, {
-        method: 'POST',
-        headers: {
-           'Content-Type': 'application/json',
-           'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({
-           product_name: data1[0],
-           expiry_date: data1[1]
-        })
-    }).then(async (response) => {
-        $('#product_status_in_bd').html('Товар успешно удалён!');
-        return await response.json();
-    });
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCSRFToken()
+    },
+    body: JSON.stringify({
+      product_name: data1[0],
+      expiry_date: data1[1]
+    })
+  })
+  .then(response => response.json()) // Парсим JSON из ответа
+  .then(data => {
+    $('#product_status_in_bd').html('Товар успешно удалён!');
+    $('#number_of_item').html('Колличество товара в холодильнике: ' + data.number); // Используем значение из ответа
+    return data;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 }
 
 
 async function add_item(event) {
   event.preventDefault();
   let btn = document.getElementById('add_btn');
-  let data = btn.name;
-  data = data.split('===')
+  let data1 = btn.name.split('===');
+
   return fetch(`/add_item/`, {
-        method: 'POST',
-        headers: {
-           'Content-Type': 'application/json',
-           'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({
-           product_name: data[0],
-           expiry_date: data[1]
-        })
-    }).then(async (response) => {
-        $('#product_status_in_bd').html('Товар успешно добавлен!');
-        return await response.json();
-    });
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCSRFToken()
+    },
+    body: JSON.stringify({
+      product_name: data1[0],
+      expiry_date: data1[1]
+    })
+  })
+  .then(response => response.json()) // Парсим JSON из ответа
+  .then(data => {
+    $('#product_status_in_bd').html('Товар успешно добавлен!');
+    $('#number_of_item').html('Колличество товара в холодильнике: ' + data.number); // Используем значение из ответа
+    return data;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 }
 
 

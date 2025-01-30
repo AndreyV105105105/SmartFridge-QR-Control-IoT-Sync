@@ -138,16 +138,18 @@ def add_product():
 def delitem():
     sp = request.json
     print(1, sp)
-    dm.update_product_quantity(sp['product_name'], sp['expiry_date'], False)
-    return sp
+    now_number = dm.update_product_quantity(sp['product_name'], sp['expiry_date'], False)
+    now_number = {'number':int(now_number[0])}
+    return now_number
 
 
 @app.route('/add_item/', methods=['POST'])
 def additem():
     sp = request.json
     print(1, sp)
-    dm.update_product_quantity(sp['product_name'], sp['expiry_date'], True)
-    return sp
+    now_number = dm.update_product_quantity(sp['product_name'], sp['expiry_date'], True)
+    now_number = {'number': int(now_number[0])}
+    return now_number
 
 
 
