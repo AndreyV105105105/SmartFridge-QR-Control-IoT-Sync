@@ -1,4 +1,4 @@
-**<p style="text-align: center;"><span style="font-size:30px;">SmartFridge: QR Control & IoT Sync»</span></p>**
+# **<p align="center">SmartFridge: QR Control & IoT Sync»</p>**
 
 ![SmartFridge Banner](static/images/fridge-banner.png)  
 
