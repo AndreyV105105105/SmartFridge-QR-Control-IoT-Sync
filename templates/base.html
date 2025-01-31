@@ -56,11 +56,19 @@
         <div class="maininfo">
             {% block maininfo %}<div class="product-list">
             {% for product in products %}
-                <div class="product-card">
+                <div class="product-card" data-product-id={{product.id}} data-quantity="0" data-name={{product.product_name}}>
                     <h2>  {{ product.product_name }}</h2>
                     <h4>Сейчас в холодильнике {{product.number}}</h4>
-                    <h4> осталось {{ product.days }} дней</h4>
-                    <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
+                    <h4> осталось {{product.days}} дней</h4>
+
+                    <div class="cart-controls">
+                        <button class="add-btn" onclick="handleCart(this)">Add to Cart</button> <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
+                        <div class="quantity-controls" style="display: none;">
+                            <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                            <span class="quantity">1</span>
+                            <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>{% endblock %}
@@ -93,5 +101,7 @@
         updateButtonVisibility(parameterValue);
     </script>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

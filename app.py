@@ -127,6 +127,23 @@ def use_bd():
         json.dump(item, costil)
     return jsonify(item)
 
+@app.route('/addtoshoppinglist/', methods=['POST'])
+def add_toshoppinglist():
+    sp = request.json
+    item = dm.add_to_shopping_list(sp['product_name'], sp['quantity'])
+    return sp
+
+@app.route('/updateshopinglistquantity/', methods=['POST'])
+def updateshoping_listquantity():
+    sp = request.json
+    item = dm.update_shoping_list_quantity(sp['product_name'], sp['quantity'])
+    return sp
+
+@app.route('/removefromshoppinglist/', methods=['POST'])
+def removefromshopping_list():
+    sp = request.json
+    item = dm.remove_from_shopping_list(sp['product_name'])
+    return sp
 
 @app.route('/addproduct/', methods=['POST'])
 def add_product():

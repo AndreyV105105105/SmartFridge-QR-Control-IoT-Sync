@@ -130,7 +130,8 @@ class DatabaseManager:
                 now_number += 1
             else:
                 now_number -= 1
-            print(now_number)
+            if now_number < 0:
+                now_number = 0
             n = current_product.get("added_history", "{}")
             added_history = json.loads(n)
             added_history[str(now_number)] = datetime.now().isoformat()
@@ -156,8 +157,9 @@ class DatabaseManager:
         rows = self.cursor.fetchall()
         products = []
         for row in rows:
-            product = self._row_to_dict(row)
-            products.append(product)
+            if row[5] > 0:
+                product = self._row_to_dict(row)
+                products.append(product)
         return products
 
     def get_product_by_id(self, product_id):
@@ -239,18 +241,34 @@ class DatabaseManager:
             self.conn.rollback()
             return False, f"Ошибка добавления продукта в список покупок: {e}"
 
-    def remove_from_shopping_list(self, item_id):
-        """Удаляет продукт из списка покупок по ID."""
+    def update_shoping_list_quantity(self, product_name, new_quantity):
+        """Обновляет количество продукта."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+        try:
+            self.cursor.execute("""
+                  UPDATE shopping_list
+                  SET quantity = ?
+                  WHERE product_name = ?
+                """, (int(new_quantity), product_name,))
+            self.conn.commit()
+            return product_name, f"Количество продукта в корзине с name = {product_name} обновлено"
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Ошибка при обновлении количества продукта: {e}"
+
+    def remove_from_shopping_list(self, product_name):
+        """Удаляет продукт из списка покупок по product_name."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
-            self.cursor.execute("DELETE FROM shopping_list WHERE id = ?", (item_id,))
+            self.cursor.execute("DELETE FROM shopping_list WHERE product_name = ?", (product_name,))
             self.conn.commit()
             if self.cursor.rowcount > 0:
                 return True, "Продукт успешно удален из списка покупок."
             else:
-                return False, "Продукт с таким id не найден в списке покупок."
+                return False, "Продукт с таким product_name не найден в списке покупок."
         except Exception as e:
             self.conn.rollback()
             return False, f"Ошибка удаления продукта из списка покупок: {e}"
