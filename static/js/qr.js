@@ -75,57 +75,6 @@ function use_bd(product_name, expiry_date) {
 }
 
 
-function shopping_list_add(product_name, quantity) {
-  return fetch(`/addtoshoppinglist/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCSRFToken()
-    },
-    body: JSON.stringify({
-      product_name: product_name,
-      quantity: quantity
-    })
-  }).then(async (response) => {
-    return await response.json();
-  });
-}
-
-
-function shopping_list_update(product_name, quantity) {
-  return fetch(`/updateshopinglistquantity/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCSRFToken()
-    },
-    body: JSON.stringify({
-      product_name: product_name,
-      quantity: quantity
-    })
-  }).then(async (response) => {
-    return await response.json();
-  });
-}
-
-
-function shopping_list_remove(product_name) {
-  return fetch(`/removefromshoppinglist/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCSRFToken()
-    },
-    body: JSON.stringify({
-      product_name: product_name
-    })
-  }).then(async (response) => {
-    return await response.json();
-  });
-}
-
-
-
 function add_product(product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type) {
   return fetch(`/addproduct/`, {
     method: 'POST',
@@ -150,43 +99,6 @@ function add_product(product_name, product_type, manufacture_date, expiry_date, 
 function getCSRFToken() {
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
   return csrfToken ? csrfToken.value : '';
-}
-
-const cart = {};
-
-function handleCart(button) {
-    const product = button.closest('.product-card');
-    const productId = product.dataset.productId;
-    const new_quantity = shopping_list_add(product.dataset.name, 1)
-    cart[productId] = new_quantity;
-    product.dataset.quantity = 1;
-
-    button.style.display = 'none';
-    product.querySelector('.quantity-controls').style.display = 'flex';
-
-    console.log('Cart updated:', cart);
-}
-
-function updateQuantity(button, change) {
-    const product = button.closest('.product-card');
-    const quantityElement = product.querySelector('.quantity');
-    let quantity = parseInt(product.dataset.quantity);
-    quantity += change;
-    if (quantity < 1) {
-        delete cart[product.dataset.productId];
-        product.querySelector('.add-btn').style.display = 'block';
-        product.querySelector('.quantity-controls').style.display = 'none';
-        const new_quantity = shopping_list_remove(product.dataset.name)
-        product.dataset.quantity = 0;
-        return;
-    }
-    else{const new_quantity = shopping_list_update(product.dataset.name, quantity)}
-
-    product.dataset.quantity = quantity;
-    quantityElement.textContent = quantity;
-    cart[product.dataset.productId] = quantity;
-
-    console.log('Cart updated:', cart);
 }
 
 

@@ -241,7 +241,7 @@ class DatabaseManager:
             self.conn.rollback()
             return False, f"Ошибка добавления продукта в список покупок: {e}"
 
-    def update_shoping_list_quantity(self, product_name, new_quantity):
+    def update_shopping_list_quantity(self, product_name, new_quantity):
         """Обновляет количество продукта."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")

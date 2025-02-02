@@ -6,7 +6,22 @@
 
 {% block maininfo %}
 <div>
-    <h1>Сперма в рот</h1>
-    <p>Летит как будто самолёт.</p>
+    <div class="shopping-list">
+    {% for product in cart %}
+        <div class="product-card" data-product-id={{product.id}} data-quantity="0" data-name={{product.product_name}}>
+            <h2>  {{ product.product_name }}</h2>
+            <h4>Товара в корзине: {{ product.quantity }}</h4>
+
+            <div class="cart-controls">
+                <button class="add-btn" onclick="handleCart(this)">Add to Cart</button>
+                <div class="quantity-controls" style="display: none;">
+                    <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                    <span class="quantity">1</span>
+                    <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}

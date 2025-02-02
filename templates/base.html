@@ -56,7 +56,10 @@
         <div class="maininfo">
             {% block maininfo %}<div class="product-list">
             {% for product in products %}
-                <div class="product-card" data-product-id={{product.id}} data-quantity="0" data-name={{product.product_name}}>
+                <div class="product-card"
+                     data-product-id="{{product.id}}"
+                     data-quantity="0"
+                     data-name="{{product.product_name}}">
                     <h2>  {{ product.product_name }}</h2>
                     <h4>Сейчас в холодильнике {{product.number}}</h4>
                     <h4> осталось {{product.days}} дней</h4>
@@ -80,6 +83,7 @@
                     <img src="{{ url_for('static', filename='img/qr2.png') }}" alt="Скан">
             </button>
         </footer>
+
         <!-- скрипт, который делает кнопку qr видимой/невидимой в зависимости от девайса-->
         <script>
         // Получаем значение параметра из Python
@@ -102,6 +106,6 @@
     </script>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shopping_list.js') }}"></script>
 </body>
 </html>

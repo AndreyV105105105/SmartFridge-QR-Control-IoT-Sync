@@ -107,7 +107,9 @@ def shopping_list():
     user_agent_parsed = parse(user_agent)
     parameter_value = user_agent_parsed.is_mobile
 
-    return render_template('shopping_list.html',  parameter_value=parameter_value)
+    sp = dm.get_all_shopping_list()
+    print(sp)
+    return render_template('shopping_list.html',  parameter_value=parameter_value, cart=sp)
 
 
 @app.route('/qr')
@@ -136,7 +138,7 @@ def add_toshoppinglist():
 @app.route('/updateshopinglistquantity/', methods=['POST'])
 def updateshoping_listquantity():
     sp = request.json
-    item = dm.update_shoping_list_quantity(sp['product_name'], sp['quantity'])
+    item = dm.update_shopping_list_quantity(sp['product_name'], sp['quantity'])
     return sp
 
 @app.route('/removefromshoppinglist/', methods=['POST'])
