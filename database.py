@@ -329,6 +329,8 @@ class DatabaseManager:
         for row in rows:
             product = self._row_to_dict(row)
             if product["added_history"]:
+                print(row)
+                print(type(row))
                 n = row.get("added_history", "{}")
                 added_history = json.loads(n)
                 for number, date_str in added_history.items():

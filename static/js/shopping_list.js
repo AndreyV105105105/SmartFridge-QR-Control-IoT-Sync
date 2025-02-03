@@ -77,8 +77,8 @@ function updateQuantity(button, change) {
     const quantityElement = product.querySelector('.quantity');
     let quantity = parseInt(product.dataset.quantity);
     const productId = product.dataset.productId;
-    console.log(quantity)
     quantity += change;
+    console.log(quantity)
     if (quantity < 1) {
         shopping_list_remove(product.dataset.name)
           .then(() => {
