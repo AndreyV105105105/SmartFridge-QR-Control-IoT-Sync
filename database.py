@@ -328,8 +328,8 @@ class DatabaseManager:
 
         for row in rows:
             product = self._row_to_dict(row)
-            if product["added_history"]:
-                n = row.get("added_history", "{}")
+            n = product.get("added_history", "{}")
+            if n:
                 added_history = json.loads(n)
                 for number, date_str in added_history.items():
                     added_date = datetime.fromisoformat(date_str)
@@ -338,18 +338,18 @@ class DatabaseManager:
                         if float(number) > 0:
                             added_positive_quantity_count += 1
 
-            if product["removed_history"]:
-                n = row.get("removed_history", "{}")
+            n = product.get("removed_history", "{}")
+            if n:
                 removed_history = json.loads(n)
                 for number, date_str in removed_history.items():
                     removed_date = datetime.fromisoformat(date_str)
                     if start_datetime <= removed_date <= end_datetime:
                         removed_count += 1
 
-            if product["added_history"]:
+            n = product.get("added_history", "{}")
+            if n:
                 last_added_quantity = 0
                 last_added_date = None
-                n = row.get("added_history", "{}")
                 added_history = json.loads(n)
                 for number, date_str in added_history.items():
                     added_date = datetime.fromisoformat(date_str)
@@ -359,11 +359,11 @@ class DatabaseManager:
                             last_added_date = added_date
                 if last_added_quantity != 0:
                     quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
-                                                                                 0) + last_added_quantity
-            if product["removed_history"]:
+                                                                             0) + last_added_quantity
+            n = product.get("removed_history", "{}")
+            if n:
                 last_removed_quantity = 0
                 last_removed_date = None
-                n = row.get("removed_history", "{}")
                 removed_history = json.loads(n)
                 for number, date_str in removed_history.items():
                     removed_date = datetime.fromisoformat(date_str)
