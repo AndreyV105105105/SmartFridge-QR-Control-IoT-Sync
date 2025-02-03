@@ -6,7 +6,11 @@
 
 {% block maininfo %}
 <div>
-    <h1>Аналитика</h1>
-    <p>Здесь будет аналитическая информация.</p>
+    <form><input id="start_date" type="date" value="2025-01-21"></form>
+    <form><input id="end_date" type="date" value="2025-01-01"></form>
+    <input id="butt" type="button" value="Кнопка"/>
+    <div id="str"></div>
 </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
 {% endblock %}

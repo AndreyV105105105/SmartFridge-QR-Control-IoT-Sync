@@ -225,16 +225,16 @@ class DatabaseManager:
 
         return products
 
-    def add_to_shopping_list(self, product_name, quantity):
+    def add_to_shopping_list(self, product_id, product_name, quantity):
         """Добавляет продукт в список покупок."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
 
         try:
             self.cursor.execute("""
-                INSERT INTO shopping_list (product_name, quantity)
-                VALUES (?, ?)
-            """, (product_name, quantity))
+                INSERT INTO shopping_list (id, product_name, quantity)
+                VALUES (?, ?, ?)
+            """, (product_id, product_name, quantity,))
             self.conn.commit()
             return True, "Продукт успешно добавлен в список покупок."
         except Exception as e:

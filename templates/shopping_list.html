@@ -8,7 +8,10 @@
 <div>
     <div class="shopping-list">
     {% for product in cart %}
-        <div class="product-card" data-product-id={{product.id}} data-quantity="0" data-name={{product.product_name}}>
+        <div class="product-card"
+             data-product-id="{{product.id}}"
+             data-quantity="0"
+             data-name="{{product.product_name}}">
             <h2>  {{ product.product_name }}</h2>
             <h4>Товара в корзине: {{ product.quantity }}</h4>
 
@@ -25,3 +28,5 @@
     </div>
 </div>
 {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/shopping_list.js') }}"></script>

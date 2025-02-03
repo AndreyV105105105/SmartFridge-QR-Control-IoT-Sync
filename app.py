@@ -108,7 +108,6 @@ def shopping_list():
     parameter_value = user_agent_parsed.is_mobile
 
     sp = dm.get_all_shopping_list()
-    print(sp)
     return render_template('shopping_list.html',  parameter_value=parameter_value, cart=sp)
 
 
@@ -132,7 +131,7 @@ def use_bd():
 @app.route('/addtoshoppinglist/', methods=['POST'])
 def add_toshoppinglist():
     sp = request.json
-    item = dm.add_to_shopping_list(sp['product_name'], sp['quantity'])
+    item = dm.add_to_shopping_list(int(sp['id']), sp['product_name'], sp['quantity'])
     return sp
 
 @app.route('/updateshopinglistquantity/', methods=['POST'])
@@ -156,7 +155,6 @@ def add_product():
 @app.route('/del_item/', methods=['POST'])
 def delitem():
     sp = request.json
-    print(1, sp)
     now_number = dm.update_product_quantity(sp['product_name'], sp['expiry_date'], False)
     now_number = {'number':int(now_number[0])}
     return now_number
@@ -165,10 +163,18 @@ def delitem():
 @app.route('/add_item/', methods=['POST'])
 def additem():
     sp = request.json
-    print(1, sp)
     now_number = dm.update_product_quantity(sp['product_name'], sp['expiry_date'], True)
     now_number = {'number': int(now_number[0])}
     return now_number
+
+
+@app.route('/getanalytics/', methods=['POST'])
+def get_analytics():
+    sp = request.json
+    print(sp['start_date'], sp['end_date'])
+    analytics = dm.get_consumption_analytics(sp['start_date'], sp['end_date'])
+    return analytics
+
 
 
 

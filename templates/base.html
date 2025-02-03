@@ -67,7 +67,7 @@
                     <div class="cart-controls">
                         <button class="add-btn" onclick="handleCart(this)">Add to Cart</button> <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
                         <div class="quantity-controls" style="display: none;">
-                            <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                            <button class="quantity-btn" nclick="updateQuantity(this, -1)">-</button>
                             <span class="quantity">1</span>
                             <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                         </div>

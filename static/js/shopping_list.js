@@ -6,7 +6,7 @@ function getCSRFToken() {
 }
 
 
-function shopping_list_add(product_name, quantity) {
+function shopping_list_add(product_id, product_name, quantity) {
   return fetch(`/addtoshoppinglist/`, {
     method: 'POST',
     headers: {
@@ -14,6 +14,7 @@ function shopping_list_add(product_name, quantity) {
       'X-CSRFToken': getCSRFToken()
     },
     body: JSON.stringify({
+      id: product_id,
       product_name: product_name,
       quantity: quantity
     })
@@ -61,7 +62,7 @@ function handleCart(button) {
     const product = button.closest('.product-card');
     const quantityElement = product.querySelector('.quantity');
     const productId = product.dataset.productId;
-    shopping_list_add(product.dataset.name, 1)
+    shopping_list_add(productId, product.dataset.name, 1)
       .then(() => {
         button.style.display = 'none';
         product.querySelector('.quantity-controls').style.display = 'flex';
