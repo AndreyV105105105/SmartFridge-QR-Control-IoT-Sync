@@ -381,3 +381,5 @@ class DatabaseManager:
             "removed_count": removed_count,
             "quantity_diffs": [{"product_name": name, "quantity_diff": diff} for name, diff in quantity_diffs.items()]
         }
+
+
