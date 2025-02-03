@@ -353,7 +353,7 @@ class DatabaseManager:
                     added_date = datetime.fromisoformat(date_str)
                     if start_datetime <= added_date <= end_datetime:
                         if not last_added_date or added_date > last_added_date:
-                            last_added_quantity = float(number)
+                            last_added_quantity = int(number)
                             last_added_date = added_date
                 if last_added_quantity != 0:
                     quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
@@ -367,7 +367,7 @@ class DatabaseManager:
                     removed_date = datetime.fromisoformat(date_str)
                     if start_datetime <= removed_date <= end_datetime:
                         if not last_removed_date or removed_date > last_removed_date:
-                            last_removed_quantity = float(number)
+                            last_removed_quantity = int(number)
                             last_removed_date = removed_date
                 if last_removed_quantity != 0:
                     quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
