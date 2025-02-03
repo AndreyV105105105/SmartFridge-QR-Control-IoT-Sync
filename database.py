@@ -335,8 +335,6 @@ class DatabaseManager:
                     added_date = datetime.fromisoformat(date_str)
                     if start_datetime <= added_date <= end_datetime:
                         added_count += 1
-                        if float(number) > 0:
-                            added_positive_quantity_count += 1
 
             n = product.get("removed_history", "{}")
             if n:
@@ -377,7 +375,6 @@ class DatabaseManager:
 
         return {
             "added_count": added_count,
-            "added_positive_quantity_count": added_positive_quantity_count,
             "removed_count": removed_count,
             "quantity_diffs": [{"product_name": name, "quantity_diff": diff} for name, diff in quantity_diffs.items()]
         }
