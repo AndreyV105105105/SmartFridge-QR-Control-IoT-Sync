@@ -1,6 +1,6 @@
-# **<p align="center">SmartFridge: QR Control & IoT Sync»</p>**
+<p align="center"><img src="static/img/logo.PNG" width="100" height="100" /></p>
 
-![SmartFridge Banner](static/images/fridge-banner.png)  
+# **<p align="center">SmartFridge: QR Control & IoT Sync»</p>**
 
 [![Demo Video](https://img.shields.io/badge/🎥-Watch%20Demo-red)](https://example.com/demo-video)
 
