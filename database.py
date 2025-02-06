@@ -39,7 +39,8 @@ class DatabaseManager:
                 nutrition_info TEXT,
                 measurement_type TEXT NOT NULL,
                 added_history TEXT,
-                removed_history TEXT
+                removed_history TEXT,
+                is_notification_read BOOLEAN DEFAULT 0
             )
         """)
         self.cursor.execute("""
@@ -301,13 +302,14 @@ class DatabaseManager:
 
         today = datetime.now().date()
         cutoff_date = today + timedelta(days=days)
-        self.cursor.execute("SELECT * FROM products WHERE expiry_date BETWEEN ? AND ?",
+        self.cursor.execute("SELECT * FROM products WHERE expiry_date BETWEEN ? AND ? and is_notification_read = 0",
                             (today.isoformat(), cutoff_date.isoformat()))
         rows = self.cursor.fetchall()
         products = []
         for row in rows:
             product = self._row_to_dict(row)
             products.append(product)
+        print(1, products)
         return products
 
     def get_consumption_analytics(self, start_date, end_date):
@@ -372,7 +374,7 @@ class DatabaseManager:
                 if last_removed_quantity != 0:
                     quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
                                                                                  0) - last_removed_quantity
-
+        print(quantity_diffs)
         return {
             "added_count": added_count,
             "removed_count": removed_count,

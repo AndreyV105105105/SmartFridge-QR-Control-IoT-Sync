@@ -55,18 +55,6 @@ def index():
         else:
             e['days'] = 0
 
-    # today = datetime.now().date()
-    # cutoff_date = today + datetime.timedelta(days=days)
-    # now = datetime.now()
-    # current_time = now.strftime("%H:%M")
-    # if current_time == '6:00':
-    #     exp_products_3 = dm.get_products_expiring_soon(3)
-    #     exp_products_2 = dm.get_products_expiring_soon(2)
-    #     exp_products_1 = dm.get_products_expiring_soon(1)
-    #     exp_products_0 = dm.get_products_expiring_soon(0)
-    #     print(exp_products_3)
-    #     print(1)
-
     return render_template('index.html', products=filtered_products, search_query=search_query,
                            product_type=selected_category, parameter_value=parameter_value)
 
@@ -80,6 +68,8 @@ def product(product_id):
 
     product_info = next((p for p in products if p['id'] == product_id), None)
     return render_template('product.html', product=product_info, parameter_value=parameter_value)
+
+
 # Страница уведомлений
 @app.route('/notifications')
 def notifications():
@@ -87,7 +77,11 @@ def notifications():
     user_agent_parsed = parse(user_agent)
     parameter_value = user_agent_parsed.is_mobile
 
-    return render_template('notifications.html',  parameter_value=parameter_value)
+    products1 = dm.get_products_expiring_soon(1)
+    products0 = dm.get_products_expiring_soon(0)
+
+    return render_template('notifications.html',  parameter_value=parameter_value,
+                           products1=products1, products0=products0)
 
 
 # Страница аналитики
@@ -173,7 +167,8 @@ def get_analytics():
     sp = request.json
     print(sp['start_date'], sp['end_date'])
     analytics = dm.get_consumption_analytics(sp['start_date'], sp['end_date'])
-    return analytics
+    print(analytics)
+    return jsonify(analytics)
 
 
 

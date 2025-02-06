@@ -6,7 +6,23 @@
 
 {% block maininfo %}
 <div>
-    <h1>Уведомления</h1>
-    <p>Здесь будут ваши уведомления.</p>
+    {% for product in products0 %}
+        <div class="product-card"
+             data-product-id="{{product.id}}"
+             data-name="{{product.product_name}}">
+            <h2>  {{ product.product_name }}</h2>
+            <p>СРОК ГОДНОСТИ ИСТЁК!!!😨😨😨</p>
+            <button>ПРОЧИТАНО</button>
+        </div>
+    {% endfor %}
+    {% for product in products1 %}
+        <div class="product-card"
+             data-product-id="{{product.id}}"
+             data-name="{{product.product_name}}">
+            <h2>  {{ product.product_name }}</h2>
+            <p>СРОК ГОДНОСТИ ИСТЕЧЁТ ЧЕРЕЗ 1 ДЕНЬ</p>
+            <button>ПРОЧИТАНО</button>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
