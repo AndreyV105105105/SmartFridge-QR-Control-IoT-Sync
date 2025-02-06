@@ -310,6 +310,53 @@ p {
     flex: 1 1 calc(30% - 20px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+.search-bar1 {
+    position: fixed;
+    right: 150px;
+    top: 90px;
+    padding: 2px ;
+    height: 43px;
+    max-width: 50px;
+    border: none;
+    color: #717179;
+    border-radius: 12px 12px 2px 2px;
+    background-color: #f3eee4;
+    font-size: 12px;
+    border: 2px solid #a8bed4;
+    outline: 2px ridge #a8bed4;
+    outline-offset: 5px;
+}
+.search-bar-filter {
+    position: fixed;
+    right: 25px;
+    top: 90px;
+    padding: 2px ;
+    height: 43px;
+    max-width: 150px;
+    border: none;
+    color: #717179;
+    border-radius: 12px 12px 2px 2px;
+    background-color: #f3eee4;
+    font-size: 12px;
+    border: 2px solid #a8bed4;
+    outline: 2px ridge #a8bed4;
+    outline-offset: 5px;
+}
+.search-bar input{
+    position: fixed;
+    top: 90px;
+    right: 210px;
+    left: 30px;
+    padding: 10px;
+    height: 19px;
+    border: none;
+    border-radius: 12px 12px 2px 2px;
+    background-color: #f3eee4;
+    font-size: 12px;
+    border: 2px solid #a8bed4;
+    outline: 2px ridge #a8bed4;
+    outline-offset: 5px;
+}
 }
 /* Общие стили для страницы */
 body {

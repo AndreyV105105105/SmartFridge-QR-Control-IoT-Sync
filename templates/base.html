@@ -39,7 +39,7 @@
 <!--            <input type="text" placeholder="Поиск...">-->
 <!--        </div>-->
         <form method="get" class="search-bar">
-            <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
+            <input type="text" name="search"  placeholder="Поиск" value="{{ search_query }}">
             <select name="product_type" class="search-bar-filter">
                 <option value="">Все категории</option>
                 <option value="Мясо" > мясо </option>
@@ -49,7 +49,7 @@
                 <option value="Хлеб" > хлеб </option>
                 <option value="Молочные продукты" > молочка </option>
             </select>
-            <button class="search-bar1" type="submit">Поиск</button>
+            <button class="search-bar1" type="submit">Найти</button>
         </form>
 
         <!-- Основной каталог -->
@@ -67,7 +67,7 @@
                     <div class="cart-controls">
                         <button class="add-btn" onclick="handleCart(this)">Add to Cart</button> <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
                         <div class="quantity-controls" style="display: none;">
-                            <button class="quantity-btn" nclick="updateQuantity(this, -1)">-</button>
+                            <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
                             <span class="quantity">1</span>
                             <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                         </div>
