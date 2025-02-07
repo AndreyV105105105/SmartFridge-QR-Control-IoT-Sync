@@ -6,6 +6,7 @@ function getCSRFToken() {
 }
 
 
+//функция для добавления товара в корзину
 function shopping_list_add(product_id, product_name, quantity) {
   return fetch(`/addtoshoppinglist/`, {
     method: 'POST',
@@ -24,6 +25,7 @@ function shopping_list_add(product_id, product_name, quantity) {
 }
 
 
+//функция для изменения количества товара в корзине
 function shopping_list_update(product_name, quantity) {
   return fetch(`/updateshopinglistquantity/`, {
     method: 'POST',
@@ -40,7 +42,7 @@ function shopping_list_update(product_name, quantity) {
   });
 }
 
-
+//функция для удаления товара из корзины
 function shopping_list_remove(product_name) {
   return fetch(`/removefromshoppinglist/`, {
     method: 'POST',
@@ -58,6 +60,7 @@ function shopping_list_remove(product_name) {
 
 const cart = {};
 
+// функции для добавления информации о товаре в localStorage
 function handleCart(button) {
     const product = button.closest('.product-card');
     const quantityElement = product.querySelector('.quantity');
@@ -101,8 +104,6 @@ function updateQuantity(button, change) {
       });
 }
 
-
-
 function saveCartState(productId) {
   const productBlock = document.querySelector(`[data-product-id="${productId}"]`);
   const quantityControls = productBlock.querySelector('.quantity-controls');
@@ -120,7 +121,7 @@ function saveCartState(productId) {
 }
 
 
-// Восстановление состояния (исправленный селектор)
+// Восстановление состояния
 document.addEventListener('DOMContentLoaded', () => {
   const allStates = JSON.parse(localStorage.getItem('cartStates')) || {};
 
@@ -138,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       quantityControls.style.display = state.isVisible ? 'flex' : 'none';
       addButton.style.display = state.isVisible ? 'none' : 'block';
       quantityElement.textContent = state.quantity;
-      productBlock.dataset.quantity = state.quantity; // Важно обновить data-атрибут
+      productBlock.dataset.quantity = state.quantity;
     }
   });
 });

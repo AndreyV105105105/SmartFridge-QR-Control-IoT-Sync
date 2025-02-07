@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<title>Сканер QR</title>
+{% endblock %}
 
 {% block maininfo %}
-        <h1>QR Code Scanner</h1>
-    <button id="openCameraButton">Open Camera</button>
+    <h2>Сканирование QR</h2>
+    <button id="openCameraButton">Открыть камеру</button>
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
     <div>
         <h1 id="product_name"></h1>

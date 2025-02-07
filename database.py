@@ -33,7 +33,7 @@ class DatabaseManager:
                 product_type TEXT NOT NULL,
                 manufacture_date DATE NOT NULL,
                 expiry_date DATE NOT NULL,
-                number REAL NOT NULL,
+                number INTEGER NOT NULL,
                 quantity REAL NOT NULL,
                 unit TEXT NOT NULL,
                 nutrition_info TEXT,
@@ -295,6 +295,27 @@ class DatabaseManager:
             "added_at": row[3]
         }
 
+    def get_count_of_notifications(self):
+        products0 = self.get_products_expiring_soon(0)
+        products1 = self.get_products_expiring_soon(1)
+        new_notifications = False
+        if len(products0) != 0 or len(products1) != 0:
+            new_notifications = True
+        notification_count = 0
+        id0 = []
+        for e in products0:
+            id0.append(e['id'])
+        id1 = []
+        for e in products1:
+            id1.append(e['id'])
+        id1 = list(set(id1) - set(id0))
+        products1_1 = []
+        for e in products1:
+            if e['id'] in id1:
+                products1_1.append(e)
+        notification_count += len(products1_1) + len(products0)
+        return new_notifications, notification_count, products0, products1_1
+
     def get_products_expiring_soon(self, days=7):
         """Получает продукты, у которых истекает срок годности в течение days дней."""
         if not self.conn or not self.cursor:
@@ -309,14 +330,30 @@ class DatabaseManager:
         for row in rows:
             product = self._row_to_dict(row)
             products.append(product)
-        print(1, products)
+        return products
+
+    def update_products_expiring_soon(self, product_id):
+        """Получает продукты, у которых истекает срок годности в течение days дней."""
+        if not self.conn or not self.cursor:
+            raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
+
+        self.cursor.execute(
+        'UPDATE products SET is_notification_read = 1 WHERE id = ?',
+        (product_id,)
+    )
+        self.conn.commit()
+        rows = self.cursor.fetchall()
+        products = []
+        for row in rows:
+            product = self._row_to_dict(row)
+            products.append(product)
         return products
 
     def get_consumption_analytics(self, start_date, end_date):
         """Получает аналитику потребления продуктов за указанный период."""
         if not self.conn or not self.cursor:
             raise Exception("Нет подключения к БД. Сначала нужно вызвать connect()")
-
+        end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
         start_datetime = datetime.fromisoformat(start_date)
         end_datetime = datetime.fromisoformat(end_date)
 
@@ -358,8 +395,11 @@ class DatabaseManager:
                             last_added_quantity = int(number)
                             last_added_date = added_date
                 if last_added_quantity != 0:
-                    quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
-                                                                             0) + last_added_quantity
+                    if product["product_name"] not in quantity_diffs:
+                        quantity_diffs[product["product_name"]] = [[last_added_quantity], []]
+                    else:
+                        quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
+                                                                                     0)[0] + last_added_quantity
             n = product.get("removed_history", "{}")
             if n:
                 last_removed_quantity = 0
@@ -372,16 +412,20 @@ class DatabaseManager:
                             last_removed_quantity = int(number)
                             last_removed_date = removed_date
                 if last_removed_quantity != 0:
-                    quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
-                                                                                 0) - last_removed_quantity
+                    if product["product_name"] not in quantity_diffs:
+                        quantity_diffs[product["product_name"]] = [[], [last_removed_quantity]]
+                    else:
+                        quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
+                                                                        0)[1] + last_removed_quantity
         print(quantity_diffs)
+        for e in quantity_diffs:
+            if len(quantity_diffs[e][0]) == 0:
+                quantity_diffs[e][0] = 0
+            if len(quantity_diffs[e][1]) == 0:
+                quantity_diffs[e][1] = 0
         return {
             "added_count": added_count,
             "removed_count": removed_count,
-            "quantity_diffs": [{"product_name": name, "quantity_diff": diff} for name, diff in quantity_diffs.items()]
+            "quantity_diffs": [{"product_name": name, 'diff': [diff[0], diff[1]]} for name, diff in
+                               quantity_diffs.items()]
         }
-
-
-
-
-

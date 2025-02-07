@@ -6,23 +6,26 @@
 
 {% block maininfo %}
 <div>
+    <h2>Уведомления</h2>
     {% for product in products0 %}
-        <div class="product-card"
+        <div class="notification-card"
              data-product-id="{{product.id}}"
              data-name="{{product.product_name}}">
-            <h2>  {{ product.product_name }}</h2>
-            <p>СРОК ГОДНОСТИ ИСТЁК!!!😨😨😨</p>
+            <h3>  {{ product.product_name }}</h3>
+            <p>СРОК ГОДНОСТИ ИСТЁК!!!</p>
             <button>ПРОЧИТАНО</button>
         </div>
     {% endfor %}
     {% for product in products1 %}
-        <div class="product-card"
+        <div class="notification-card"
              data-product-id="{{product.id}}"
              data-name="{{product.product_name}}">
-            <h2>  {{ product.product_name }}</h2>
+            <h3>  {{ product.product_name }}</h3>
             <p>СРОК ГОДНОСТИ ИСТЕЧЁТ ЧЕРЕЗ 1 ДЕНЬ</p>
             <button>ПРОЧИТАНО</button>
         </div>
     {% endfor %}
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
 {% endblock %}

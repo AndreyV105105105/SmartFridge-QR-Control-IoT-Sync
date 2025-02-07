@@ -21,8 +21,8 @@ butt.onclick = function() {
         })
       }).then(async (response) => {
         const data = await response.json();
-      	document.getElementById('str1').innerHTML = data.added_count;
-      	document.getElementById('str2').innerHTML = data.removed_count;
+      	document.getElementById('str1').innerHTML = 'Всего товаров добавлено: ' + data.added_count;
+      	document.getElementById('str2').innerHTML = 'Всего товаров удалено: ' + data.removed_count;
       	const container = document.getElementById('products-container');
 
         // Очищаем предыдущие результаты
@@ -38,12 +38,16 @@ butt.onclick = function() {
                 const namePara = document.createElement('p');
                 namePara.textContent = `Продукт: ${item.product_name}`;
 
-                const diffPara = document.createElement('p');
-                diffPara.textContent = `Изменение: ${item.quantity_diff}`;
+                const addPara = document.createElement('p');
+                addPara.textContent = `Добавлено: ${item.diff[0]}`;
+
+                const dellPara = document.createElement('p');
+                dellPara.textContent = `Удалено: ${item.diff[1]}`;
 
                 // Добавляем элементы в div
                 div.appendChild(namePara);
-                div.appendChild(diffPara);
+                div.appendChild(addPara);
+                div.appendChild(dellPara);
 
                 // Добавляем div в контейнер
                 container.appendChild(div);

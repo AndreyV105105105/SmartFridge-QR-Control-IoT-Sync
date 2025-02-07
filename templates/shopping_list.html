@@ -6,6 +6,7 @@
 
 {% block maininfo %}
 <div>
+    <h2>Список покупок</h2>
     <div class="shopping-list">
     {% for product in cart %}
         <div class="product-card"
@@ -13,8 +14,6 @@
              data-quantity="0"
              data-name="{{product.product_name}}">
             <h2>  {{ product.product_name }}</h2>
-            <h4>Товара в корзине: {{ product.quantity }}</h4>
-
             <div class="cart-controls">
                 <button class="add-btn" onclick="handleCart(this)">Add to Cart</button>
                 <div class="quantity-controls" style="display: none;">

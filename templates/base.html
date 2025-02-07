@@ -28,26 +28,21 @@
                 <button class="icon-button1" onclick="location.href='{{ url_for('analytics') }}'">
                     <img src="{{ url_for('static', filename='img/analytics.png') }}" alt="Аналитика">
                 </button>
-                <button class="icon-button" onclick="location.href='{{ url_for('notifications') }}'">
+                <button class="icon-button {% if new_notifications %}has-notifications{% endif %}
+                    " onclick="location.href='{{ url_for('notifications') }}'">
                     <img src="{{ url_for('static', filename='img/notifications.png') }}" alt="Уведомления">
+                    <span class="notification-badge" data-count="{{ notification_count }}"></span>
                 </button>
             </div>
         </header>
 
-        <!-- Поисковая строка -->
-<!--        <div class="search-bar">-->
-<!--            <input type="text" placeholder="Поиск...">-->
-<!--        </div>-->
         <form method="get" class="search-bar">
             <input type="text" name="search"  placeholder="Поиск" value="{{ search_query }}">
             <select name="product_type" class="search-bar-filter">
                 <option value="">Все категории</option>
-                <option value="Мясо" > мясо </option>
-                <option value="Овощ" > овощи </option>
-                <option value="Фрукт" > фрукты </option>
-                <option value="Ягода" > ягоды </option>
-                <option value="Хлеб" > хлеб </option>
-                <option value="Молочные продукты" > молочка </option>
+                {% for product in category %}
+                    <option value={{product}}> {{product}} </option>
+                {% endfor %}
             </select>
             <button class="search-bar1" type="submit">Найти</button>
         </form>
@@ -60,9 +55,12 @@
                      data-product-id="{{product.id}}"
                      data-quantity="0"
                      data-name="{{product.product_name}}">
-                    <h2>  {{ product.product_name }}</h2>
-                    <h4>Сейчас в холодильнике {{product.number}}</h4>
-                    <h4> осталось {{product.days}} дней</h4>
+                    <h2>{{ product.product_name }}</h2>
+                    <h4>Наличие в холодильнике: {{product.number}}</h4>
+
+                    <h4>До истечения срока годности</h4>
+                    <h4>{{product.days}} дней</h4>
+
 
                     <div class="cart-controls">
                         <button class="add-btn" onclick="handleCart(this)">Add to Cart</button> <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
@@ -90,16 +88,16 @@
         const parameterValue = {{ parameter_value | tojson }};
 
         // Функция для управления видимостью и доступностью кнопки
-<!--        function updateButtonVisibility(isVisible) {-->
-<!--            const button = document.getElementById('myButton');-->
-<!--            if (isVisible) {-->
-<!--                button.classList.remove('hidden');-->
-<!--                button.disabled = false; // Делаем кнопку доступной-->
-<!--            } else {-->
-<!--                button.classList.add('hidden');-->
-<!--                button.disabled = true; // Делаем кнопку недоступной-->
-<!--            }-->
-<!--        }-->
+        function updateButtonVisibility(isVisible) {
+            const button = document.getElementById('myButton');
+            if (isVisible) {
+                button.classList.remove('hidden');
+                button.disabled = false; // Делаем кнопку доступной
+            } else {
+                button.classList.add('hidden');
+                button.disabled = true; // Делаем кнопку недоступной
+            }
+        }
 
         // Используем значение параметра
         updateButtonVisibility(parameterValue);

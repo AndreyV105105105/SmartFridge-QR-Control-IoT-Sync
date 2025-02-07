@@ -2,6 +2,7 @@
 let json_item;
 
 
+// функция для уменьшения количества товара в БД
 async function delete_item(event) {
   event.preventDefault();
   let btn = document.getElementById('delete_btn');
@@ -29,7 +30,7 @@ async function delete_item(event) {
       });
 }
 
-
+// функция для увелечения количества товара в БД
 async function add_item(event) {
   event.preventDefault();
   let btn = document.getElementById('add_btn');
@@ -57,7 +58,7 @@ async function add_item(event) {
       });
 }
 
-
+// функция для получения информации о товаре из БД
 function use_bd(product_name, expiry_date) {
   return fetch(`/usebd/`, {
     method: 'POST',
@@ -74,7 +75,7 @@ function use_bd(product_name, expiry_date) {
   });
 }
 
-
+// функция для добавления товара в БД
 function add_product(product_name, product_type, manufacture_date, expiry_date, quantity, unit, nutrition_info, measurement_type) {
   return fetch(`/addproduct/`, {
     method: 'POST',
@@ -101,7 +102,7 @@ function getCSRFToken() {
   return csrfToken ? csrfToken.value : '';
 }
 
-
+// функция для сканирования QR и вывода информации о нём
 $(document).ready(function() {
   $('#openCameraButton').click(function() {
     $('#cameraInput').click();
