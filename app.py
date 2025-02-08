@@ -25,7 +25,7 @@ def index():
     products = dm.get_all_products()
     products.sort(key=lambda x: x['product_name'])
 
-    # скрытие кнопки сканирования на ПК
+    # определение вида устройства для скрытия кнопки сканирования на ПК
     user_agent = request.headers.get('User-Agent')
     user_agent_parsed = parse(user_agent)
     parameter_value = user_agent_parsed.is_mobile

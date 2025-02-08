@@ -5,9 +5,11 @@
 {% endblock %}
 
 {% block maininfo %}
+    <!--Кнопка сканирования QR кода-->
     <h2>Сканирование QR</h2>
     <button id="openCameraButton">Открыть камеру</button>
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
+    <!--Вывод информации о товаре-->
     <div>
         <h1 id="product_name"></h1>
         <p id="full_information"></p>
