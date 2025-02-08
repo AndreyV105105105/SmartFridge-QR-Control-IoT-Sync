@@ -60,7 +60,11 @@
                     <h2>{{ product.product_name }}</h2>
                     <h4>Наличие в холодильнике: {{product.number}}</h4>
 
-                    <h4>Годен ещё {{product.days}} дней</h4>
+                    {% if product.days == 0 %}
+                        <h4>ИСПОРЧЕНО!!!</h4>
+                    {% else %}
+                        <h4>Годен ещё {{ product.days }} дней</h4>
+                    {% endif %}
 
 
                     <div class="cart-controls">
