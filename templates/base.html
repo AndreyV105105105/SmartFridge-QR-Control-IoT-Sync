@@ -19,6 +19,7 @@
 </head>
 <body>
     <div class="page">
+        <!--Верхняя панель с логотипом и 3 кнопками Список покупок/Аналитика/Уведомления-->
         <header>
             <div class="logo" onclick="location.href='{{ url_for('index') }}'">
                 <img src="{{ url_for('static', filename='img/logo2.svg') }}" alt="Логотип">
@@ -38,6 +39,7 @@
             </div>
         </header>
 
+        <!--Поисковая строка с кнопкой поиска и фильтром по категориям-->
         <form method="get" class="search-bar">
             <input type="text" name="search"  placeholder="Поиск" value="{{ search_query }}">
             <select name="product_type" class="search-bar-filter">
@@ -52,6 +54,7 @@
         <!-- Основной каталог -->
         <div class="maininfo">
             {% block maininfo %}<div class="product-list">
+            <!--Отображение 'карточки' каждого товара в холодильнике на главном экране           -->
             {% for product in products %}
                 <div class="product-card"
                      data-product-id="{{product.id}}"
@@ -59,10 +62,9 @@
                      data-name="{{product.product_name}}">
                     <h2>{{ product.product_name }}</h2>
                     <h4>Наличие в холодильнике: {{product.number}}</h4>
-
                     <h4>Годен ещё {{product.days}} дней</h4>
 
-
+                    <!--Добавление товара в список покупок               -->
                     <div class="cart-controls">
                         <button class="add-btn" onclick="handleCart(this)">Добавить в корзину</button> <a class="add-btn" href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
                         <div class="quantity-controls" style="display: none;">
