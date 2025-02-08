@@ -10,7 +10,6 @@ document.querySelectorAll('.notification-card button').forEach(button => {
     button.addEventListener('click', function() {
         const notification_card = this.closest('.notification-card');
         const productId = notification_card.dataset.productId;
-
         fetch(`/mark_as_read/${productId}`, {
             method: 'POST',
             headers: {
@@ -20,6 +19,7 @@ document.querySelectorAll('.notification-card button').forEach(button => {
         .then(response => {
             if (response.ok) {
                 notification_card.remove();
+                location. reload();
             }
         });
     });

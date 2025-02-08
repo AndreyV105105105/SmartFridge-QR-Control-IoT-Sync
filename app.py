@@ -255,7 +255,7 @@ def upload():
             logger.info(f"Decoded QR: {qr_data}")
             return jsonify({'success': True, 'qr_data': qr_data})
 
-        return jsonify({'success': False, 'message': 'QR code not found'})
+        return jsonify({'success': False, 'message': 'QR код не найден'})
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
