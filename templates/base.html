@@ -20,7 +20,9 @@
 <body>
     <div class="page">
         <header>
-            <div class="logo" onclick="location.href='{{ url_for('index') }}'">Логотип</div>
+            <div class="logo" onclick="location.href='{{ url_for('index') }}'">
+                <img src="{{ url_for('static', filename='img/logo2.svg') }}" alt="Логотип">
+            </div>
             <div class="buttons">
                 <button class="icon-button" onclick="location.href='{{ url_for('shopping_list') }}'">
                     <img src="{{ url_for('static', filename='img/shoppingcart44.png') }}" alt="Список покупок">
@@ -63,7 +65,7 @@
 
 
                     <div class="cart-controls">
-                        <button class="add-btn" onclick="handleCart(this)">Add to Cart</button> <a href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
+                        <button class="add-btn" onclick="handleCart(this)">Добавить в корзину</button> <a class="add-btn" href="{{ url_for('product', product_id=product.id) }}">Подробнее</a>
                         <div class="quantity-controls" style="display: none;">
                             <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
                             <span class="quantity">1</span>
