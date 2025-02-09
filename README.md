@@ -2,7 +2,7 @@
 
 # **<p align="center">SmartFridge: QR Control & IoT Sync»</p>**
 
-[![Demo Video](https://img.shields.io/badge/🎥-Watch%20Demo-red)](https://example.com/demo-video)
+[![Demo Video](https://img.shields.io/badge/🎥-Watch%20Demo-red)]([https://example.com/demo-video](https://rutube.ru/video/9d3c0b8cb0310b87fc8e941be37738b7/))
 
 ### 🌟 Умный контроль запасов
 **SmartFridge** — это революционная система для автоматизации учета продуктов в холодильниках. Проект сочетает в себе:
