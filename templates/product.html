@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block search_form %}<div class="search-bar">
+</div>{% endblock %}
 
 {% block title %}
 <title>{{ product.product_name }}</title>
@@ -14,7 +16,7 @@
     <p>Дата истечения срока годности: {{ product.expiry_date }}</p>
     <p>Масса/Объём: {{ product.quantity }}, {{ product.unit }}</p>
     <p>Тип измерения: {{ product.measurement_type }}</p>
-    <h2>Пищевая ценность:</h2>
+    <h3>Пищевая ценность на 100 г:</h3>
     <p>Калории: {{ product.nutrition_info.calories }}</p>
     <p>Белки: {{ product.nutrition_info.proteins }}</p>
     <p>Жиры: {{ product.nutrition_info.fats }}</p>

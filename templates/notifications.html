@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block search_form %}<div class="search-bar">
+</div>{% endblock %}
 
 {% block title %}
 <title>Уведомления</title>
@@ -26,6 +28,7 @@
         </div>
     {% endfor %}
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
 {% endblock %}

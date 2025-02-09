@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block search_form %}<div class="search-bar">
+</div>{% endblock %}
 
 {% block title %}
 <title>Список покупок</title>
@@ -16,7 +18,7 @@
              data-name="{{product.product_name}}">
             <h2>  {{ product.product_name }}</h2>
             <div class="cart-controls">
-                <button class="add-btn" onclick="handleCart(this)">Add to Cart</button>
+                <button class="add-btn" onclick="handleCart(this)">Добавить в корзину</button>
                 <div class="quantity-controls" style="display: none;">
                     <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
                     <span class="quantity">1</span>
@@ -27,6 +29,7 @@
     {% endfor %}
     </div>
 </div>
-{% endblock %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/shopping_list.js') }}"></script>
+    <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
+{% endblock %}

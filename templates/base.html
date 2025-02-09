@@ -38,6 +38,7 @@
             </div>
         </header>
 
+        {% block search_form %}
         <form method="get" class="search-bar">
             <input type="text" name="search"  placeholder="Поиск" value="{{ search_query }}">
             <select name="product_type" class="search-bar-filter">
@@ -48,6 +49,7 @@
             </select>
             <button class="search-bar1" type="submit">Найти</button>
         </form>
+        {% endblock %}
 
         <!-- Основной каталог -->
         <div class="maininfo">

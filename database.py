@@ -129,21 +129,36 @@ class DatabaseManager:
             now_number = int(self.cursor.fetchone()[0])
             if status_number:
                 now_number += 1
+                n = current_product.get("added_history", "{}")
+                added_history = json.loads(n)
+                added_history[str(now_number)] = datetime.now().isoformat()
+                added_history_json = json.dumps(added_history)
+                self.cursor.execute("""
+                                  UPDATE products
+                                  SET number = ?,
+                                  added_history = ?
+                                  WHERE product_name = ? AND expiry_date = ?
+                                """, (now_number, added_history_json, product_name, expiry_date,))
+                self.conn.commit()
             else:
                 now_number -= 1
-            if now_number < 0:
-                now_number = 0
-            n = current_product.get("added_history", "{}")
-            added_history = json.loads(n)
-            added_history[str(now_number)] = datetime.now().isoformat()
-            added_history_json = json.dumps(added_history)
-            self.cursor.execute("""
-                  UPDATE products
-                  SET number = ?,
-                  added_history = ?
-                  WHERE product_name = ? AND expiry_date = ?
-                """, (now_number, added_history_json, product_name, expiry_date,))
-            self.conn.commit()
+                if now_number < 0:
+                    now_number = 0
+                else:
+                    n = current_product.get("removed_history", "{}")
+                    removed_history = json.loads(n)
+                    if str(1) not in removed_history:
+                        removed_history[str(1)] = [datetime.now().isoformat()]
+                    else:
+                        removed_history[str(1)].append(datetime.now().isoformat())
+                    removed_history_json = json.dumps(removed_history)
+                    self.cursor.execute("""
+                                      UPDATE products
+                                      SET number = ?,
+                                      removed_history = ?
+                                      WHERE product_name = ? AND expiry_date = ?
+                                    """, (now_number, removed_history_json, product_name, expiry_date,))
+                    self.conn.commit()
             return now_number, f"Количество продукта с name = {product_name} и expiry_date = {expiry_date} обновлено"
         except Exception as e:
             self.conn.rollback()
@@ -379,9 +394,10 @@ class DatabaseManager:
             if n:
                 removed_history = json.loads(n)
                 for number, date_str in removed_history.items():
-                    removed_date = datetime.fromisoformat(date_str)
-                    if start_datetime <= removed_date <= end_datetime:
-                        removed_count += 1
+                    for e in date_str:
+                        removed_date = datetime.fromisoformat(e)
+                        if start_datetime <= removed_date <= end_datetime:
+                            removed_count += 1
 
             n = product.get("added_history", "{}")
             if n:
@@ -396,33 +412,33 @@ class DatabaseManager:
                             last_added_date = added_date
                 if last_added_quantity != 0:
                     if product["product_name"] not in quantity_diffs:
-                        quantity_diffs[product["product_name"]] = [[last_added_quantity], []]
+                        quantity_diffs[product["product_name"]] = [last_added_quantity, 0]
                     else:
-                        quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
-                                                                                     0)[0] + last_added_quantity
+                        quantity_diffs[product["product_name"]] = [quantity_diffs[product["product_name"]][0] + last_added_quantity, quantity_diffs[product["product_name"]][1]]
             n = product.get("removed_history", "{}")
             if n:
                 last_removed_quantity = 0
                 last_removed_date = None
                 removed_history = json.loads(n)
                 for number, date_str in removed_history.items():
-                    removed_date = datetime.fromisoformat(date_str)
-                    if start_datetime <= removed_date <= end_datetime:
-                        if not last_removed_date or removed_date > last_removed_date:
-                            last_removed_quantity = int(number)
-                            last_removed_date = removed_date
+                    for e in date_str:
+                        removed_date = datetime.fromisoformat(e)
+                        if start_datetime <= removed_date <= end_datetime:
+                            if not last_removed_date or removed_date > last_removed_date:
+                                last_removed_quantity += int(number)
+                                last_removed_date = removed_date
                 if last_removed_quantity != 0:
                     if product["product_name"] not in quantity_diffs:
-                        quantity_diffs[product["product_name"]] = [[], [last_removed_quantity]]
+                        quantity_diffs[product["product_name"]] = [0, last_removed_quantity]
                     else:
-                        quantity_diffs[product["product_name"]] = quantity_diffs.get(product["product_name"],
-                                                                        0)[1] + last_removed_quantity
+                        print(last_removed_quantity)
+                        print(quantity_diffs)
+                        print(product)
+                        print(product["product_name"])
+                        print(quantity_diffs.get(product["product_name"]))
+                        print(quantity_diffs[product["product_name"]][1])
+                        quantity_diffs[product["product_name"]] = [quantity_diffs[product["product_name"]][0], quantity_diffs[product["product_name"]][1] + last_removed_quantity]
         print(quantity_diffs)
-        for e in quantity_diffs:
-            if len(quantity_diffs[e][0]) == 0:
-                quantity_diffs[e][0] = 0
-            if len(quantity_diffs[e][1]) == 0:
-                quantity_diffs[e][1] = 0
         return {
             "added_count": added_count,
             "removed_count": removed_count,

@@ -130,7 +130,7 @@ $(document).ready(function() {
             $('#expiry_date').html(' Дата истечения срока годности: ' + ex['expiry_date']);
             $('#quantity_unit').html('масса/объем, ед. измерения: ' + ex['quantity'] + ', ' +  ex['unit']);
             $('#measurement_type').html('Тип измерения: ' + ex['measurement_type']);
-            $('#nutrition_info').html('Пищевая ценность: ');
+            $('#nutrition_info').html('Пищевая ценность на 100 г: ');
             $('#calories').html('Калории: ' + ex['nutrition_info']["calories"]);
             $('#proteins').html('Белки: ' + ex['nutrition_info']["proteins"]);
             $('#fats').html('Жиры: ' + ex['nutrition_info']["fats"]);

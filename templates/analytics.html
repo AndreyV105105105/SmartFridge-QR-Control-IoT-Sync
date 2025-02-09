@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block search_form %}<div class="search-bar">
+</div>{% endblock %}
 
 {% block title %}
 <title>Аналитика</title>
@@ -8,7 +10,7 @@
 <div>
     <h2>Аналитика потребления</h2>
     <!--Возможность выбора промежутка времени, на котором пользователь хочет посмотреть аналитику-->
-    <form><input id="start_date" type="date" value="2025-01-21"></form>
+    <form><input id="start_date" type="date" value="2025-01-01"></form>
     <form><input id="end_date" type="date" value="2025-01-01"></form>
     <input id="butt" type="button" value="Получить аналитику потребления"/>
     <div id="str1"></div>
@@ -17,4 +19,5 @@
 </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+    <a href="{{ url_for('index') }}" class="btn">Вернуться в каталог</a>
 {% endblock %}

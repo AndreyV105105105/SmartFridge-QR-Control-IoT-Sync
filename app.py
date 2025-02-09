@@ -225,7 +225,6 @@ def get_analytics():
 
 @app.route('/mark_as_read/<int:product_id>', methods=['POST'])
 def mark_as_read(product_id):
-    print(product_id)
     updat = dm.update_products_expiring_soon(product_id)
     return jsonify({'status': 'success'})
 
