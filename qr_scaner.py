@@ -1,9 +1,7 @@
-from flask import Flask, render_template, request, jsonify
 from pyzbar.pyzbar import decode
 from PIL import Image, ImageOps
 import io
 import logging
-import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
