@@ -32,11 +32,9 @@
 
 ### ⚙️ Пошаговая инструкция
 
-1. **Клонирование репозитория**:
- ```bash
- git clone https://github.com/yourusername/SmartFridge-QR-Control-IoT-Sync.git
- cd smartfridge
- ```
+1. **Скачивание репозитория**:
+Скачайте последний релиз этого проекта.
+
 2. **Установка зависимостей**
  ```bash
  pip install --upgrade pip
