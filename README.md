@@ -34,15 +34,15 @@
 
 1. **Клонирование репозитория**:
  ```bash
- git clone https://github.com/yourusername/smartfridge.git
+ git clone https://github.com/yourusername/SmartFridge-QR-Control-IoT-Sync.git
  cd smartfridge
  ```
 2. **Установка зависимостей**
  ```bash
  pip install --upgrade pip
- pip install -r requirements.txt
+ pip install -r SmartFridge-QR-Control-IoT-Sync/requirements.txt
  ```
 3. **Запуск сайта**
  ```bash
- flask run --host=0.0.0.0 --port=5000
+python SmartFridge-QR-Control-IoT-Sync/app.py
  ```
