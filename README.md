@@ -38,9 +38,9 @@
 2. **Установка зависимостей**
  ```bash
  pip install --upgrade pip
- pip install -r SmartFridge-QR-Control-IoT-Sync/requirements.txt
+ pip install -r requirements.txt
  ```
 3. **Запуск сайта**
  ```bash
-python SmartFridge-QR-Control-IoT-Sync/app.py
+python app.py
  ```
