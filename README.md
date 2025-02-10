@@ -47,6 +47,6 @@ python app.py
    Нужно быть подключённым к одной сети с ПК, ВПН должен быть выключен.
 
 [![Demo Video](https://img.shields.io/badge/🎥-Watch%20Demo-red)](https://rutube.ru/video/9d3c0b8cb0310b87fc8e941be37738b7/)
-ССылка на видео
+Ссылка на видео
 https://rutube.ru/video/9d3c0b8cb0310b87fc8e941be37738b7/
 
